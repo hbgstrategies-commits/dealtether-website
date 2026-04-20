@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tether — Property Management Deal Workspace</title>
+<meta name="description" content="Due diligence workspace built specifically for property management acquisitions. Every task, every phase, from LOI to transition."/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0A1628;color:#F5F2EC;min-height:100vh;}
+:root{
+  --navy:#0A1628;--navy2:#1A2F50;--navy3:#2A4A7A;
+  --teal:#00C9A7;--teal-dim:#00A388;--teal-bg:rgba(0,201,167,0.08);--teal-bd:rgba(0,201,167,0.2);
+  --warm:#F5F2EC;--muted:#9AA5B4;--border:#1E3A5F;
+  --amber:#E8A020;--danger:#E24B4A;
+}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.5rem;border-bottom:0.5px solid var(--border);background:rgba(10,22,40,0.97);position:sticky;top:0;z-index:200;backdrop-filter:blur(8px);}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-wordmark{font-size:17px;font-weight:700;letter-spacing:-.5px;color:var(--warm);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.pm-badge{font-size:11px;padding:3px 10px;border-radius:99px;background:var(--teal-bg);color:var(--teal);border:0.5px solid var(--teal-bd);font-weight:500;}
+.nav-cta{font-size:13px;padding:7px 16px;border-radius:7px;background:var(--teal);color:var(--navy);font-weight:600;text-decoration:none;transition:background .15s;}
+.nav-cta:hover{background:var(--teal-dim);}
+/* APP */
+.app{max-width:1060px;margin:0 auto;padding:1.5rem 1rem 4rem;}
+/* DEAL HEADER */
+.deal-hdr{background:var(--navy2);border:0.5px solid var(--border);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.deal-name-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.75rem;}
+.deal-name{font-size:20px;font-weight:700;letter-spacing:-.3px;}
+.days-pill{font-size:13px;padding:5px 14px;border-radius:8px;background:var(--navy3);color:var(--muted);}
+.deal-meta{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.dm{display:flex;flex-direction:column;gap:2px;}
+.dml{font-size:11px;color:var(--muted);}
+.dmv{font-size:13px;font-weight:500;color:var(--warm);}
+.prog-bar-wrap{margin-top:.5rem;}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+.prog-label{font-size:12px;color:var(--muted);}
+.prog-pct{font-size:12px;font-weight:600;color:var(--warm);}
+.prog-track{height:6px;background:var(--navy3);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:var(--teal);transition:width .4s;}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1rem;}
+.stat{background:var(--navy2);border-radius:8px;padding:.65rem .75rem;}
+.stat-l{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.stat-v{font-size:20px;font-weight:600;}
+/* PARTICIPANTS */
+.parts-bar{background:var(--navy2);border:0.5px solid var(--border);border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;}
+.parts-title{font-size:12px;font-weight:600;color:var(--warm);margin-bottom:.6rem;display:flex;align-items:center;justify-content:space-between;}
+.parts-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.part-chip{display:flex;align-items:center;gap:7px;background:var(--navy);border:0.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--warm);position:relative;}
+.part-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.part-info{display:flex;flex-direction:column;}
+.part-name{font-size:12px;font-weight:500;color:var(--warm);}
+.part-role{font-size:10px;color:var(--muted);}
+.add-part-btn{font-size:12px;padding:5px 12px;border-radius:8px;border:0.5px dashed var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s;}
+.add-part-btn:hover{border-color:var(--teal);color:var(--teal);}
+/* INVITE MODAL */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,22,40,0.92);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--navy2);border:0.5px solid var(--border);border-radius:16px;padding:1.5rem;max-width:440px;width:100%;}
+.modal-title{font-size:16px;font-weight:600;color:var(--warm);margin-bottom:.25rem;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;}
+.modal-field{margin-bottom:.75rem;}
+.modal-label{font-size:12px;color:var(--muted);margin-bottom:4px;display:block;}
+.modal-input{width:100%;font-size:13px;padding:8px 12px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);outline:none;transition:border-color .15s;}
+.modal-input:focus{border-color:var(--teal);}
+.modal-select{width:100%;font-size:13px;padding:8px 12px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);outline:none;cursor:pointer;}
+.modal-actions{display:flex;gap:8px;margin-top:1.25rem;}
+.modal-btn-p{flex:1;padding:9px;border-radius:8px;background:var(--teal);color:var(--navy);font-size:13px;font-weight:600;border:none;cursor:pointer;}
+.modal-btn-s{padding:9px 16px;border-radius:8px;border:0.5px solid var(--border);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;}
+.modal-note{font-size:11px;color:var(--muted);margin-top:.75rem;line-height:1.5;}
+/* REPORT SCHEDULER */
+.sched-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:.75rem 1rem;background:var(--navy2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:1rem;}
+.day-btn{font-size:12px;padding:4px 9px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);}
+.day-btn.sel{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd);font-weight:500;}
+.time-sel{font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);cursor:pointer;}
+.prev-btn{font-size:12px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--warm);margin-left:auto;}
+.prev-btn:hover{background:var(--navy3);}
+/* REPORT PANEL */
+.report-panel{background:var(--navy2);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;display:none;}
+.rp-hdr{padding:1rem 1.25rem;border-bottom:0.5px solid var(--border);}
+.rp-sub{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.rp-subject{font-size:13px;font-weight:600;color:var(--warm);background:var(--navy3);padding:3px 10px;border-radius:6px;display:inline-block;}
+.rp-meta{font-size:12px;color:var(--muted);margin-top:6px;}
+.rp-body{padding:1rem 1.25rem;}
+.rp-sec-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid var(--border);}
+.rp-sec-title.red{color:var(--danger);}
+.rp-sec-title.amber{color:var(--amber);}
+.rp-sec-title.green{color:var(--teal);}
+.rp-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
+.rp-item:last-child{border-bottom:none;}
+.rp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.rp-name{font-weight:500;color:var(--warm);}
+.rp-role{color:var(--muted);}
+.rp-flag-note{font-size:12px;color:var(--danger);background:rgba(226,74,74,0.07);border-radius:6px;padding:5px 8px;margin-top:4px;line-height:1.5;}
+.rp-send-btn{font-size:12px;padding:5px 14px;border-radius:7px;border:0.5px solid var(--teal);background:var(--teal-bg);color:var(--teal);cursor:pointer;font-weight:500;}
+/* CONTROLS */
+.controls{display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap;align-items:center;}
+.view-tabs{display:flex;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;}
+.vt{padding:6px 14px;font-size:12px;background:transparent;border:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.vt.active{background:var(--navy2);color:var(--warm);font-weight:500;}
+.filter-sel{padding:6px 10px;font-size:13px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);cursor:pointer;}
+.week-badge{font-size:12px;padding:4px 10px;border-radius:8px;background:var(--teal-bg);color:var(--teal);font-weight:500;border:0.5px solid var(--teal-bd);}
+/* COL HEADERS */
+.col-hdrs{display:grid;grid-template-columns:10px 16px 1fr 110px 80px 58px;gap:8px;padding:4px 8px;margin-bottom:2px;}
+.col-h{font-size:11px;color:var(--muted);}
+/* PHASES */
+.phase-sec{margin-bottom:1.25rem;}
+.phase-hdr{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 0 5px;border-bottom:0.5px solid var(--border);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;}
+.phase-count{font-size:11px;color:var(--muted);}
+.phase-count.done{color:var(--teal);}
+.add-btn{font-size:11px;padding:2px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);}
+.add-btn:hover{background:var(--navy2);}
+/* TASK ROW */
+.task-row{display:grid;grid-template-columns:10px 16px 1fr 110px 80px 58px;gap:8px;align-items:center;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .1s;}
+.task-row:hover{background:var(--navy2);}
+.task-row.week-hl{border-left:3px solid var(--teal);padding-left:5px;border-radius:0;}
+.task-row.sel{background:var(--navy2);}
+.task-row.flag-row{background:rgba(226,74,74,0.05);border:0.5px solid rgba(226,74,74,0.15);}
+.pri-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.flag-ic{font-size:12px;opacity:.18;}
+.flag-ic.on{opacity:1;}
+.flag-warn{position:relative;}
+.flag-warn::after{content:'';position:absolute;top:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:var(--danger);}
+.tname{font-size:13px;color:var(--warm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tname.done{text-decoration:line-through;color:var(--muted);}
+.notes-dot{width:5px;height:5px;border-radius:50%;background:#185FA5;flex-shrink:0;}
+/* ROLE PILLS */
+.rpill{font-size:11px;padding:3px 7px;border-radius:99px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:108px;}
+.r-buyer{background:#E6F1FB;color:#0C447C;}
+.r-buyerteam{background:#EEF0FE;color:#2A3AB8;}
+.r-ops{background:#E1F5EE;color:#085041;}
+.r-acq{background:#FAEEDA;color:#633806;}
+.r-bank{background:#EEF8FF;color:#0B4F7A;}
+.r-lawyer{background:#FAECE7;color:#712B13;}
+.r-coach{background:#F3EEF9;color:#4A1875;}
+.r-cpa{background:#F0F9E8;color:#2A5C0A;}
+/* PROGRESS */
+.pbar{height:5px;background:var(--navy3);border-radius:99px;overflow:hidden;}
+.pfill{height:100%;border-radius:99px;}
+.due-cell{font-size:11px;color:var(--muted);text-align:right;}
+.due-cell.od{color:var(--danger);font-weight:500;}
+/* DETAIL PANEL */
+.detail-panel{background:var(--navy);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;display:none;}
+.detail-panel.open{display:block;}
+.d-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.d-title{font-size:15px;font-weight:600;flex:1;color:var(--warm);}
+.d-phase{font-size:11px;color:var(--muted);}
+.d-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;background:var(--navy2);padding:10px 12px;border-radius:8px;border:0.5px solid var(--border);}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.d-field{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:11px;color:var(--muted);}
+.btn-grp{display:flex;gap:6px;flex-wrap:wrap;}
+.xbtn{font-size:12px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s;}
+.xbtn:hover{background:var(--navy2);}
+.xbtn.s0{background:var(--navy2);color:var(--warm);font-weight:500;}
+.xbtn.s50{background:rgba(232,160,32,0.12);color:var(--amber);border-color:var(--amber);font-weight:500;}
+.xbtn.s100{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);font-weight:500;}
+.xbtn.shi{background:rgba(226,74,74,0.1);color:var(--danger);border-color:var(--danger);font-weight:500;}
+.xbtn.sme{background:rgba(232,160,32,0.1);color:var(--amber);border-color:var(--amber);font-weight:500;}
+.xbtn.slo{background:var(--navy2);color:var(--muted);font-weight:500;}
+.xbtn.flag-act{background:rgba(226,74,74,0.1);color:var(--danger);border-color:var(--danger);}
+.own-sel{font-size:12px;padding:5px 8px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy2);color:var(--warm);cursor:pointer;width:100%;}
+.notes-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy2);color:var(--warm);resize:vertical;min-height:60px;font-family:inherit;line-height:1.5;}
+.notes-ta:focus{outline:none;border-color:var(--teal);}
+.flag-box{background:rgba(226,74,74,0.07);border:0.5px solid rgba(226,74,74,0.2);border-radius:8px;padding:10px 12px;margin-top:10px;}
+.flag-lbl{font-size:12px;font-weight:600;color:var(--danger);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.flag-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:7px;border:1.5px solid rgba(226,74,74,0.4);background:rgba(226,74,74,0.04);color:var(--warm);resize:vertical;min-height:52px;font-family:inherit;line-height:1.5;}
+.flag-ta:focus{outline:none;border-color:var(--danger);}
+/* ADD TASK FORM */
+.add-form{background:var(--navy2);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:4px;display:grid;grid-template-columns:1fr 120px 80px auto auto;gap:8px;align-items:center;}
+.at-inp{font-size:13px;padding:5px 8px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);width:100%;}
+.at-inp:focus{outline:none;border-color:var(--teal);}
+.at-sel{font-size:12px;padding:5px 6px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);width:100%;}
+/* OWNER DROPDOWN */
+.owner-dd{position:absolute;top:100%;left:0;z-index:100;background:var(--navy2);border:0.5px solid var(--border);border-radius:8px;min-width:150px;margin-top:3px;overflow:hidden;}
+.odd-item{padding:8px 12px;font-size:13px;cursor:pointer;color:var(--warm);}
+.odd-item:hover{background:var(--navy3);}
+/* TOAST */
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--teal);color:var(--navy);font-size:13px;font-weight:600;padding:8px 20px;border-radius:99px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+/* EMPTY */
+.empty{text-align:center;padding:2rem;color:var(--muted);font-size:14px;}
+@media(max-width:700px){
+  .stats{grid-template-columns:repeat(3,1fr);}
+  .col-hdrs{grid-template-columns:10px 1fr 90px 60px;}
+  .task-row{grid-template-columns:10px 1fr 90px 60px;}
+  .add-form{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<!-- INVITE MODAL -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <div class="modal-title">Invite a participant</div>
+    <div class="modal-sub">They'll receive a magic link by email — no account needed. Assign their role so they're notified of their tasks and included in weekly reports.</div>
+    <div class="modal-field">
+      <label class="modal-label">Name</label>
+      <input class="modal-input" id="inv-name" placeholder="e.g. Sarah Johnson" type="text"/>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Email address</label>
+      <input class="modal-input" id="inv-email" placeholder="sarah@example.com" type="email"/>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Role on this deal</label>
+      <select class="modal-select" id="inv-role">
+        <option value="Buyer">Buyer</option>
+        <option value="Buyer Team">Buyer Team</option>
+        <option value="Operations Team">Operations Team</option>
+        <option value="Acq. Team">Acq. Team</option>
+        <option value="Bank">Bank</option>
+        <option value="Lawyer">Lawyer</option>
+        <option value="Business Coach">Business Coach</option>
+        <option value="CPA">CPA</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn-p" onclick="sendInvite()">Send magic link</button>
+      <button class="modal-btn-s" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="modal-note">They'll receive a unique link with access to their tasks. Their view is filtered to their role by default. All task updates are visible to the full team.</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+      <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" stroke-width="2"/>
+      <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
+    </svg>
+    <span class="nav-wordmark">tether</span>
+  </a>
+  <div class="nav-right">
+    <span class="pm-badge">Property Management</span>
+    <a href="https://buy.stripe.com/cNi5kEfuTdKh26N4IJcIE00" class="nav-cta">Start your deal — $497</a>
+  </div>
+</nav>
+
+<div class="app">
+
+  <!-- DEAL HEADER -->
+  <div class="deal-hdr">
+    <div class="deal-name-row">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Active deal · Property Management Acquisition</div>
+        <div class="deal-name">Apex Property Services</div>
+      </div>
+      <div class="days-pill"><span style="font-weight:600;color:var(--danger);" id="days-left">18</span> days remaining in DD</div>
+    </div>
+    <div class="deal-meta">
+      <div class="dm"><div class="dml">LOI signed</div><div class="dmv">Mar 17, 2026</div></div>
+      <div class="dm"><div class="dml">DD deadline</div><div class="dmv">Apr 16, 2026</div></div>
+      <div class="dm"><div class="dml">Closing target</div><div class="dmv">May 28, 2026</div></div>
+      <div class="dm"><div class="dml">Units under management</div><div class="dmv">312 units</div></div>
+      <div class="dm" style="margin-left:auto;"><div class="dml">Document folder</div><a href="#" style="font-size:13px;color:var(--teal);text-decoration:none;">&#128193; Deal Documents</a></div>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-row"><span class="prog-label">Overall deal progress</span><span class="prog-pct" id="overall-pct">0%</span></div>
+      <div class="prog-track"><div class="prog-fill" id="overall-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Total tasks</div><div class="stat-v" id="s-total">0</div></div>
+    <div class="stat"><div class="stat-l">Complete</div><div class="stat-v" style="color:var(--teal);" id="s-done">0</div></div>
+    <div class="stat"><div class="stat-l">This week</div><div class="stat-v" style="color:#85B7EB;" id="s-week">0</div></div>
+    <div class="stat"><div class="stat-l">Overdue</div><div class="stat-v" style="color:var(--danger);" id="s-overdue">0</div></div>
+    <div class="stat"><div class="stat-l">Flags</div><div class="stat-v" style="color:var(--amber);" id="s-flags">0</div></div>
+  </div>
+
+  <!-- PARTICIPANTS -->
+  <div class="parts-bar">
+    <div class="parts-title">
+      <span>Deal participants</span>
+      <span style="font-size:11px;color:var(--muted);font-weight:400;">Each person receives a magic link — no account needed &nbsp;·&nbsp; Weekly reports go to all participants</span>
+    </div>
+    <div class="parts-grid" id="parts-grid">
+      <!-- populated by JS -->
+      <button class="add-part-btn" onclick="openModal()">+ Invite participant</button>
+    </div>
+  </div>
+
+  <!-- REPORT SCHEDULER -->
+  <div class="sched-bar">
+    <span style="font-size:13px;color:var(--muted);">Weekly report sends every</span>
+    <div style="display:flex;gap:4px;" id="day-btns">
+      <button class="day-btn" onclick="setDay('Mon')">Mon</button>
+      <button class="day-btn" onclick="setDay('Tue')">Tue</button>
+      <button class="day-btn" onclick="setDay('Wed')">Wed</button>
+      <button class="day-btn sel" onclick="setDay('Thu')">Thu</button>
+      <button class="day-btn" onclick="setDay('Fri')">Fri</button>
+    </div>
+    <select class="time-sel" id="report-time">
+      <option>6:00 AM</option><option>7:00 AM</option><option selected>8:00 AM</option>
+      <option>9:00 AM</option><option>10:00 AM</option>
+    </select>
+    <span style="font-size:12px;color:var(--muted);">to all participants</span>
+    <button class="prev-btn" onclick="toggleReport()">Preview weekly report</button>
+  </div>
+
+  <!-- REPORT PANEL -->
+  <div class="report-panel" id="report-panel"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="view-tabs">
+      <button class="vt" id="btn-all" onclick="setView('all')">All tasks</button>
+      <button class="vt active" id="btn-week" onclick="setView('week')">This week</button>
+      <button class="vt" id="btn-flags" onclick="setView('flags')">&#9873; Flagged</button>
+      <button class="vt" id="btn-high" onclick="setView('high')">High priority</button>
+    </div>
+    <select class="filter-sel" id="role-f" onchange="render()">
+      <option value="all">All roles</option>
+      <option value="Buyer">Buyer</option>
+      <option value="Buyer Team">Buyer Team</option>
+      <option value="Operations Team">Operations Team</option>
+      <option value="Acq. Team">Acq. Team</option>
+      <option value="Bank">Bank</option>
+      <option value="Lawyer">Lawyer</option>
+      <option value="Business Coach">Business Coach</option>
+      <option value="CPA">CPA</option>
+    </select>
+    <select class="filter-sel" id="phase-f" onchange="render()">
+      <option value="all">All phases</option>
+      <option value="Due Diligence Documents">Documents</option>
+      <option value="Financing">Financing</option>
+      <option value="Financial Analysis">Financial Analysis</option>
+      <option value="Legal">Legal</option>
+      <option value="Operations">Operations</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Team">Team</option>
+      <option value="Closing">Closing</option>
+      <option value="Transition — Month 1">Transition Month 1</option>
+      <option value="Transition — Month 2">Transition Month 2</option>
+      <option value="Transition — Month 3">Transition Month 3</option>
+    </select>
+    <span class="week-badge">Week of Apr 14</span>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div id="detail-panel" class="detail-panel"></div>
+
+  <!-- COL HEADERS -->
+  <div class="col-hdrs">
+    <span class="col-h"></span><span class="col-h"></span>
+    <span class="col-h">Task</span>
+    <span class="col-h">Owner</span>
+    <span class="col-h">Progress</span>
+    <span class="col-h" style="text-align:right;">Due</span>
+  </div>
+
+  <div id="task-list"></div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const ROLES=['Buyer','Buyer Team','Operations Team','Acq. Team','Bank','Lawyer','Business Coach','CPA'];
+const ROLE_CSS={'Buyer':'r-buyer','Buyer Team':'r-buyerteam','Operations Team':'r-ops','Acq. Team':'r-acq','Bank':'r-bank','Lawyer':'r-lawyer','Business Coach':'r-coach','CPA':'r-cpa'};
+const ROLE_COLORS={'Buyer':'#0C447C','Buyer Team':'#2A3AB8','Operations Team':'#085041','Acq. Team':'#633806','Bank':'#0B4F7A','Lawyer':'#712B13','Business Coach':'#4A1875','CPA':'#2A5C0A'};
+const ROLE_BG={'Buyer':'#E6F1FB','Buyer Team':'#EEF0FE','Operations Team':'#E1F5EE','Acq. Team':'#FAEEDA','Bank':'#EEF8FF','Lawyer':'#FAECE7','Business Coach':'#F3EEF9','CPA':'#F0F9E8'};
+
+const PHASES=[
+  {name:'Due Diligence Documents',tasks:[
+    {task:'LOI Signed',role:'Buyer',prog:100,priority:'high',flagged:false,flagNote:'',notes:'Signed and countersigned Mar 17.'},
+    {task:'Schedule weekly standing meeting',role:'Acq. Team',prog:100,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Receive Due Diligence documents',role:'Buyer',prog:50,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'3yrs taxes',role:'Buyer',prog:0,priority:'high',flagged:true,flagNote:'2022 return shows unusual spike in owner compensation — needs explanation before financial analysis proceeds.',notes:'Requested from seller 3/17. Follow up sent 3/24.'},
+    {task:'3yrs PNL',role:'Buyer',prog:50,priority:'high',flagged:false,flagNote:'',notes:'2023 and 2024 received. Still waiting on 2022.'},
+    {task:'3yrs Balance Sheet',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Current YTD financials',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Trailing 12-24mo monthly PNL - for forecasting',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Business debt schedule',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Complete Rent Roll',role:'Buyer',prog:50,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'All Management Agreements',role:'Buyer',prog:0,priority:'high',flagged:true,flagNote:'3 agreements have non-assignment clauses. Seller must obtain written consent from those property owners before close.',notes:''},
+    {task:'All vendor & software agreements',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'View-only access to software',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Verification of security deposits',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Office space lease agreement',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Org chart w/ roles & responsibilities',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'All employee agreements',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'List of pending contracts/proposals',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Property inspection reports',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Subcontractor agreements',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Insurance policies',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Litigation history',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Insurance claims history',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'401K Plan details w/ company contributions',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Health insurance plans',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Company vehicle leases/loans',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Upload all documents to Google Folder',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Financing',tasks:[
+    {task:'Interview 3 banks (Live Oak, Secondary, Local)',role:'Buyer',prog:100,priority:'high',flagged:false,flagNote:'',notes:'Going with Live Oak Bank.'},
+    {task:'Choose a bank to work with',role:'Buyer',prog:100,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Fill out Business Debt Schedule form',role:'Buyer',prog:50,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete bank PreQual list',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete bank Personal Information Form',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete Individual/Joint Intent form',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Complete SBA form 413',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete SBA 7a form 1919',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete Rent Roll Questions form (Live Oak)',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete 24 month projection model',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete & submit underwriting requirements',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Build pitch deck for investors - if needed',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Solidify down payment requirements',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Submit request to extend DD - if needed',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'New bank accounts set up - if needed',role:'Bank',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Funding completed',role:'Bank',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Financial Analysis',tasks:[
+    {task:"Familiarize w/line items in PNL's - understand each purpose",role:'Buyer',prog:50,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Quality of earnings assessment / add-backs - model',role:'Acq. Team',prog:50,priority:'high',flagged:true,flagNote:'Add-backs appear inflated. Owner expensing personal vehicle, boat insurance, and two family members on payroll. True SDE may be 15-20% lower than claimed.',notes:'Advisor reviewing normalized model this week.'},
+    {task:'Any accrued AP? EX: Employee vacation',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'What operating costs can be eliminated or reduced?',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'What expenses need to be increased/added?',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review assets on balance sheet',role:'Acq. Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Understand assets. Do assets cover liabilities? Anything unusual?',role:'Acq. Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:"Tax returns match PNL's",role:'Acq. Team',prog:100,priority:'high',flagged:false,flagNote:'',notes:'Confirmed match on 2023 and 2024.'},
+    {task:'Any working capital needs? How much?',role:'Acq. Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Complete Sources & Uses',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Legal',tasks:[
+    {task:'Identify transaction attorney',role:'Buyer',prog:100,priority:'high',flagged:false,flagNote:'',notes:'Engaged Smith & Associates.'},
+    {task:'Ensure ALL contracts are assignable',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Contract count confirmation',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Lien search',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Create entity (if needed)',role:'Lawyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Complete any licensing requirements',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:''},
+    {task:'Review office lease & get approval of landlord',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review itemized list of all items/equipment in the deal',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review entity documents / articles of incorporation',role:'Lawyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review partnership agreement & approval to sell',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Are there any pending legal issues?',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Review insurance coverage / obtain new quote',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Seller to prepare Disclosure Schedules before closing',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Any broker or referral agreements to be drafted',role:'Lawyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Confirm deal terms',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Draft Purchase Agreement',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Operations',tasks:[
+    {task:'View-only access review of software',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Trust account review',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Security deposit verification',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Prepare software transition plan',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Review management contracts - terms',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Assess revenue streams and potential opportunities',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:"Review SOP's - if available",role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'List & understand all software tools they use',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Build org chart - identify key personnel',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Bullet all roles & responsibilities',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Detail all responsibilities filled by Seller',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Create contingency plan if team members leave',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'What roles are still needed?',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'What role(s) need to be eliminated?',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Understand how all software tools are being utilized',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review vendor agreements - Any to be cancelled?',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Conduct physical Portfolio Inspection - random sample',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Identify underperforming properties',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Schedule office or operations tour with Seller',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Inspect equipment - liquidation values',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Prepare team culture/onboarding plan',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Marketing',tasks:[
+    {task:'Review current marketing strategies',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Website transition plan',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Acquisition communication strategy',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Rebrand plan',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Who are the top clients?',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Create client retention plan - include seller',role:'Business Coach',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Target company SWOT analysis - doing well and not well',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review sales in the pipeline',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Review Google reviews for any insights',role:'Buyer',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Business take-over 90-day plan',role:'Business Coach',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Prepare bio/sales pitch for clients',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'How will you market transaction to attract acquisition growth?',role:'Operations Team',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Team',tasks:[
+    {task:'Review employee agreements',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Interview Seller about employee retention ideas',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Schedule the meet the team',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Interview key employees (coordinate with seller)',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Create new Org chart for combined operation',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:"Create new KPI's - How will you incentivize growth?",role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Draft new employee agreements',role:'Lawyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Closing',tasks:[
+    {task:'Final Go / No-Go Decision',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Meet the team',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Prepare all final closing docs w/ lawyer',role:'Lawyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Schedule time and location for closing',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Closing',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Transition — Month 1',tasks:[
+    {task:'Software transition',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Property onboardings',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Client review and retention strategy',role:'Operations Team',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Client introductions',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Internal communication of acquisition',role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:"Employee onboarding / 1:1's",role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Training & development - system/software training',role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Cultural assimilation - team building and company vision',role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Accounting integration',role:'CPA',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Transition — Month 2',tasks:[
+    {task:'Vendor Introductions',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'New office moving (if applicable)',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'CRM integration',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Financial integration - set new financial benchmarks',role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Cost optimizations',role:'Buyer',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Transition — Month 3',tasks:[
+    {task:'Branding alignment',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Public announcement',role:'Operations Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:"Financial Performance review - track KPI's",role:'Buyer',prog:0,priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:"Employee performance review KPI's",role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Client satisfaction survey',role:'Buyer Team',prog:0,priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'New website update',role:'Operations Team',prog:0,priority:'low',flagged:false,flagNote:'',notes:''},
+  ]},
+];
+
+// Default participants
+let PARTICIPANTS=[
+  {name:'Hunter Goodall',email:'hunter@example.com',role:'Buyer'},
+  {name:'Sarah L.',email:'sarah@advisor.com',role:'Acq. Team'},
+  {name:'Robert T.',email:'rt@law.com',role:'Lawyer'},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentView='week',selKey=null,reportOpen=false,reportDay='Thu',openOwnerDd=null,addingPhase=null;
+
+const TODAY=new Date(2026,3,16),WS=new Date(2026,3,14),WE=new Date(2026,3,20);
+
+function isThisWeek(t){
+  if(!t.end)return false;
+  return t.end>=WS&&t.end<=WE;
+}
+function isOverdue(t){return t.end&&t.end<TODAY&&t.prog<100;}
+function priColor(p){return p==='high'?'#E24B4A':p==='medium'?'#E8A020':'#5F5E5A';}
+function pFill(p){return p>=100?'#00C9A7':p>0?'#E8A020':'#2A4A7A';}
+function fmtDue(t){if(!t.end)return '';const d=t.end;return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+
+function getTaskEnd(pi,ti){
+  // Assign approximate due dates based on position in DD period
+  const base=new Date(2026,3,14);
+  const total=PHASES.reduce((a,p)=>a+p.tasks.length,0);
+  let idx=0;
+  for(let i=0;i<pi;i++)idx+=PHASES[i].tasks.length;
+  idx+=ti;
+  const d=new Date(base.getTime()+Math.floor(idx/total*30)*86400000);
+  return d;
+}
+
+// Assign end dates to all tasks
+PHASES.forEach((ph,pi)=>{
+  ph.tasks.forEach((t,ti)=>{
+    if(!t.end)t.end=getTaskEnd(pi,ti);
+  });
+});
+// This week tasks — assign some to current week for demo
+const THIS_WEEK_TASKS=[
+  [0,2],[0,3],[0,4],[0,9],[1,2],[1,3],[2,0],[2,1],[3,0],[3,1]
+];
+THIS_WEEK_TASKS.forEach(([pi,ti])=>{
+  if(PHASES[pi]&&PHASES[pi].tasks[ti]){
+    const d=new Date(2026,3,14+Math.floor(Math.random()*5));
+    PHASES[pi].tasks[ti].end=d;
+  }
+});
+// Set some overdue
+[[0,3],[0,10],[1,0]].forEach(([pi,ti])=>{
+  if(PHASES[pi]&&PHASES[pi].tasks[ti]){
+    PHASES[pi].tasks[ti].end=new Date(2026,3,10);
+  }
+});
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+function setDay(d){
+  reportDay=d;
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.toggle('sel',b.textContent===d));
+  if(reportOpen)buildReport();
+}
+function setView(v){
+  currentView=v;
+  ['all','week','flags','high'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',v===x));
+  closeOwnerDd();render();
+}
+function closeOwnerDd(){if(openOwnerDd){openOwnerDd.remove();openOwnerDd=null;}}
+document.addEventListener('click',()=>closeOwnerDd());
+
+function openModal(){document.getElementById('invite-modal').classList.add('open');}
+function closeModal(){document.getElementById('invite-modal').classList.remove('open');}
+function sendInvite(){
+  const name=document.getElementById('inv-name').value.trim();
+  const email=document.getElementById('inv-email').value.trim();
+  const role=document.getElementById('inv-role').value;
+  if(!name||!email){toast('Please enter name and email');return;}
+  PARTICIPANTS.push({name,email,role});
+  renderParticipants();
+  closeModal();
+  document.getElementById('inv-name').value='';
+  document.getElementById('inv-email').value='';
+  toast(`Magic link sent to ${name}`);
+}
+
+function renderParticipants(){
+  const grid=document.getElementById('parts-grid');
+  const chips=PARTICIPANTS.map(p=>{
+    const initials=p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const bg=ROLE_BG[p.role]||'#1A2F50';
+    const col=ROLE_COLORS[p.role]||'#9AA5B4';
+    return `<div class="part-chip">
+      <div class="part-avatar" style="background:${bg};color:${col};">${initials}</div>
+      <div class="part-info">
+        <div class="part-name">${p.name}</div>
+        <div class="part-role">${p.role}</div>
+      </div>
+    </div>`;
+  }).join('');
+  grid.innerHTML=chips+`<button class="add-part-btn" onclick="openModal()">+ Invite participant</button>`;
+}
+
+function toggleReport(){
+  reportOpen=!reportOpen;
+  const rp=document.getElementById('report-panel');
+  if(reportOpen){buildReport();rp.style.display='block';}
+  else rp.style.display='none';
+}
+
+function buildReport(){
+  const rp=document.getElementById('report-panel');
+  const time=document.getElementById('report-time').value;
+  const flagged=[],overdue=[],completed=[];
+  PHASES.forEach(ph=>ph.tasks.forEach(t=>{
+    if(t.prog>=100)completed.push({t,phase:ph.name});
+    if(t.flagged&&t.flagNote)flagged.push({t,phase:ph.name});
+    if(isOverdue(t))overdue.push({t,phase:ph.name});
+  }));
+  const total=PHASES.reduce((a,p)=>a+p.tasks.length,0);
+  const done=PHASES.reduce((a,p)=>{let d=0;p.tasks.forEach(t=>{if(t.prog>=100)d++;});return a+d;},0);
+  const pcts=Math.round(done/total*100);
+  const toList=(arr,dotClass)=>arr.map(({t,phase})=>`
+    <div class="rp-item">
+      <div class="rp-dot ${dotClass}"></div>
+      <div>
+        <div class="rp-name">${t.task}</div>
+        <div class="rp-role">Owner: ${t.role} &nbsp;·&nbsp; ${phase}</div>
+        ${t.flagNote?`<div class="rp-flag-note">${t.flagNote}</div>`:''}
+      </div>
+    </div>`).join('');
+  const missing=flagged.filter(({t})=>t.flagged&&!t.flagNote).length;
+  rp.innerHTML=`<div class="rp-hdr">
+    <div class="rp-sub">Subject</div>
+    <div class="rp-subject">Apex Property Services Diligence Weekly Report</div>
+    <div class="rp-meta">Sends every ${reportDay} at ${time} &nbsp;·&nbsp; To: ${PARTICIPANTS.map(p=>p.name).join(', ')}</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+      <div style="font-size:12px;color:var(--muted);">Progress: <strong style="color:var(--warm);">${pcts}% complete</strong> &nbsp;·&nbsp; ${flagged.length} active issue${flagged.length!==1?'s':''} &nbsp;·&nbsp; ${overdue.length} overdue</div>
+      <button class="rp-send-btn" style="margin-left:auto;" onclick="toast('Report sent to all participants')">Send now</button>
+    </div>
+  </div>
+  <div class="rp-body">
+    ${flagged.length?`<div style="margin-bottom:1rem;"><div class="rp-sec-title red">&#9873; Active issues (${flagged.length})</div>${toList(flagged,'rp-dot red')}</div>`:''}
+    ${overdue.length?`<div style="margin-bottom:1rem;"><div class="rp-sec-title amber">Overdue tasks (${overdue.length})</div>${toList(overdue,'rp-dot amber')}</div>`:''}
+    ${completed.length?`<div style="margin-bottom:1rem;"><div class="rp-sec-title green">Completed this period (${completed.length})</div>${toList(completed,'rp-dot green')}</div>`:''}
+    ${!flagged.length&&!overdue.length&&!completed.length?'<div style="font-size:13px;color:var(--muted);padding:1rem 0;">No completed, flagged, or overdue tasks this period.</div>':''}
+  </div>`;
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────────────────────────
+function openDetail(pi,ti){
+  const key=`${pi}-${ti}`;
+  const dp=document.getElementById('detail-panel');
+  if(selKey===key){selKey=null;dp.style.display='none';dp.classList.remove('open');render();return;}
+  selKey=key;buildDetail(pi,ti);
+}
+
+const DESCS={
+  'LOI Signed':'The Letter of Intent has been signed by both parties. This marks the official start of the due diligence period.',
+  '3yrs taxes':'Request 3 years of business tax returns from the seller. Compare figures to the P&Ls to verify consistency — discrepancies are a red flag.',
+  '3yrs PNL':'Request 3 years of Profit & Loss statements. Look for trends, unusual line items, and revenue consistency across years.',
+  'Complete Rent Roll':'Obtain the current rent roll showing all managed properties, management fees, lease terms, and contract renewal dates.',
+  'All Management Agreements':'Collect all property management contracts. Verify they are assignable to you as the new owner — some require landlord consent.',
+  'View-only access to software':'Request read-only access to PM software to review portfolio, workflows, vendor history, and data integrity before close.',
+  'Trust account review':'Verify all trust account balances, deposits, and withdrawals for compliance. This is one of the highest-risk areas in a PM acquisition.',
+  'Security deposit verification':'Confirm all security deposits are accounted for and match lease agreements. You inherit this liability at close.',
+  'Lien search':'Attorney conducts a lien search on the business and any assets included in the deal to ensure clean title.',
+  'Quality of earnings assessment / add-backs - model':'Normalize the financials by identifying owner add-backs — personal expenses run through the business that won\'t carry over post-close. This determines the true SDE.',
+  'Conduct physical Portfolio Inspection - random sample':'Physically visit a random sample of managed properties to assess condition, owner relationships, and operational reality.',
+  'Create client retention plan - include seller':'Document which clients are at risk post-transition and build a retention strategy. Include seller in client introductions during transition.',
+  'Business take-over 90-day plan':'Create a detailed plan for the first 90 days of ownership — staff communication, client introductions, systems transition, and key milestones.',
+  'Final Go / No-Go Decision':'Based on everything uncovered in due diligence, make your final decision to proceed to closing or exit the deal.',
+  'Confirm deal terms':'Final review and confirmation of all deal terms before the purchase agreement is drafted and executed.',
+  'Draft Purchase Agreement':'Attorney drafts the asset purchase agreement based on agreed deal terms. This is the primary legal document for the transaction.',
+  'Funding completed':'SBA loan and any other financing sources have been funded and funds are ready for disbursement at closing.',
+  'Accounting integration':'CPA integrates the acquired business into your accounting system. Set up chart of accounts, payroll, and reporting structures.',
+};
+function getDesc(n){
+  for(const k of Object.keys(DESCS)){if(n.toLowerCase().includes(k.toLowerCase()))return DESCS[k];}
+  return 'Complete this task as part of the due diligence process. Flag any issues discovered for the weekly report.';
+}
+
+function buildDetail(pi,ti){
+  const t=PHASES[pi].tasks[ti];
+  const dp=document.getElementById('detail-panel');
+  dp.className='detail-panel open';
+  const od=isOverdue(t);
+  dp.innerHTML=`
+    <div class="d-top">
+      <div>
+        <div class="d-title">${t.task}</div>
+        <div class="d-phase">${PHASES[pi].name} &nbsp;·&nbsp; Owner: ${t.role}${od?' &nbsp;·&nbsp; <span style="color:var(--danger)">Overdue</span>':''}</div>
+      </div>
+      <button class="xbtn${t.flagged?' flag-act':''}" onclick="attemptFlag(${pi},${ti})">${t.flagged?'&#9873; Flagged':'&#9873; Flag as issue'}</button>
+    </div>
+    <div class="d-desc">${getDesc(t.task)}</div>
+    <div class="d-grid">
+      <div class="d-field">
+        <span class="fl">Progress</span>
+        <div class="btn-grp">
+          <button class="xbtn${t.prog===0?' s0':''}" onclick="setProg(${pi},${ti},0)">Not started</button>
+          <button class="xbtn${t.prog===50?' s50':''}" onclick="setProg(${pi},${ti},50)">50% done</button>
+          <button class="xbtn${t.prog>=100?' s100':''}" onclick="setProg(${pi},${ti},100)">Complete</button>
+        </div>
+      </div>
+      <div class="d-field">
+        <span class="fl">Priority</span>
+        <div class="btn-grp">
+          <button class="xbtn${t.priority==='high'?' shi':''}" onclick="setPri(${pi},${ti},'high')">High</button>
+          <button class="xbtn${t.priority==='medium'?' sme':''}" onclick="setPri(${pi},${ti},'medium')">Medium</button>
+          <button class="xbtn${t.priority==='low'?' slo':''}" onclick="setPri(${pi},${ti},'low')">Low</button>
+        </div>
+      </div>
+      <div class="d-field">
+        <span class="fl">Owner</span>
+        <select class="own-sel" onchange="PHASES[${pi}].tasks[${ti}].role=this.value;render();">
+          ${ROLES.map(r=>`<option${r===t.role?' selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <div class="d-field">
+        <span class="fl">Due date</span>
+        <input type="date" class="at-inp" style="width:160px;font-size:13px;padding:5px 8px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy2);color:var(--warm);outline:none;" value="${t.end?t.end.toISOString().split('T')[0]:''}" onchange="PHASES[${pi}].tasks[${ti}].end=new Date(this.value+'T12:00:00');render();">
+      </div>
+    </div>
+    <div class="d-field" style="margin-bottom:10px;">
+      <span class="fl">Notes <span style="font-size:10px;color:var(--muted);">(visible to all participants)</span></span>
+      <textarea class="notes-ta" placeholder="Add notes, context, or updates..." oninput="PHASES[${pi}].tasks[${ti}].notes=this.value">${t.notes||''}</textarea>
+    </div>
+    ${t.flagged?`<div class="flag-box">
+      <div class="flag-lbl">&#9873; Issue details — required for weekly report <span style="font-size:10px;color:var(--danger);margin-left:auto;" id="freq">${!t.flagNote?'Note required':''}</span></div>
+      <textarea class="flag-ta" id="fta" placeholder="Describe the issue in detail — this appears in the weekly report sent to all participants..." oninput="setFlagNote(${pi},${ti},this.value)">${t.flagNote||''}</textarea>
+    </div>`:''}
+  `;
+}
+
+function attemptFlag(pi,ti){
+  const t=PHASES[pi].tasks[ti];
+  t.flagged=!t.flagged;if(!t.flagged)t.flagNote='';
+  buildDetail(pi,ti);render();
+  if(t.flagged)setTimeout(()=>{const ta=document.getElementById('fta');if(ta)ta.focus();},40);
+}
+function setFlagNote(pi,ti,v){
+  PHASES[pi].tasks[ti].flagNote=v;
+  const req=document.getElementById('freq');
+  if(req)req.textContent=v.trim()?'':'Note required';
+}
+function setProg(pi,ti,v){PHASES[pi].tasks[ti].prog=v;buildDetail(pi,ti);render();}
+function setPri(pi,ti,v){PHASES[pi].tasks[ti].priority=v;buildDetail(pi,ti);render();}
+
+// ─── OWNER DROPDOWN ───────────────────────────────────────────────────────────
+function showOwnerDd(e,pi,ti){
+  e.stopPropagation();closeOwnerDd();
+  const pill=e.currentTarget;
+  const dd=document.createElement('div');dd.className='owner-dd';
+  ROLES.forEach(r=>{
+    const item=document.createElement('div');item.className='odd-item';
+    item.textContent=r;
+    if(r===PHASES[pi].tasks[ti].role){item.style.color='#00C9A7';item.style.fontWeight='600';}
+    item.onclick=ev=>{ev.stopPropagation();PHASES[pi].tasks[ti].role=r;closeOwnerDd();render();if(selKey===pi+'-'+ti)buildDetail(pi,ti);};
+    dd.appendChild(item);
+  });
+  pill.style.position='relative';pill.appendChild(dd);openOwnerDd=dd;
+}
+
+// ─── ADD TASK ─────────────────────────────────────────────────────────────────
+function showAddTask(pi,e){e.stopPropagation();addingPhase=pi;render();setTimeout(()=>{const inp=document.getElementById('nt-'+pi);if(inp)inp.focus();},30);}
+function cancelAdd(){addingPhase=null;render();}
+function commitAdd(pi){
+  const n=document.getElementById('nt-'+pi);
+  const r=document.getElementById('nr-'+pi);
+  const d=document.getElementById('nd-'+pi);
+  if(!n||!n.value.trim())return;
+  const end=d&&d.value?new Date(d.value+'T12:00:00'):new Date(TODAY.getTime()+7*86400000);
+  PHASES[pi].tasks.push({task:n.value.trim(),role:r?r.value:'Buyer',prog:0,end,priority:'medium',flagged:false,flagNote:'',notes:'',custom:true});
+  addingPhase=null;toast('Task added');render();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  const rf=document.getElementById('role-f').value;
+  const pf=document.getElementById('phase-f').value;
+  let total=0,done=0,week=0,flags=0,overdue=0;
+  PHASES.forEach(p=>p.tasks.forEach(t=>{
+    total++;
+    if(t.prog>=100)done++;
+    if(isThisWeek(t))week++;
+    if(t.flagged)flags++;
+    if(isOverdue(t))overdue++;
+  }));
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-week').textContent=week;
+  document.getElementById('s-overdue').textContent=overdue;
+  document.getElementById('s-flags').textContent=flags;
+  const pct=Math.round(done/total*100);
+  document.getElementById('overall-pct').textContent=pct+'%';
+  document.getElementById('overall-fill').style.width=pct+'%';
+
+  const list=document.getElementById('task-list');list.innerHTML='';
+  let any=false;
+
+  PHASES.forEach((phase,pi)=>{
+    if(pf!=='all'&&phase.name!==pf)return;
+    const filtered=phase.tasks.filter(t=>{
+      if(rf!=='all'&&t.role!==rf)return false;
+      if(currentView==='week'&&!isThisWeek(t))return false;
+      if(currentView==='flags'&&!t.flagged)return false;
+      if(currentView==='high'&&t.priority!=='high')return false;
+      return true;
+    });
+    if(!filtered.length&&addingPhase!==pi)return;
+    any=true;
+
+    const phaseDone=phase.tasks.filter(t=>t.prog>=100).length;
+    const sec=document.createElement('div');sec.className='phase-sec';
+    const hdr=document.createElement('div');hdr.className='phase-hdr';
+    hdr.innerHTML=`<span>${phase.name}</span><div style="display:flex;align-items:center;gap:8px;"><span class="phase-count${phaseDone>0?' done':''}">${phaseDone}/${phase.tasks.length}</span><button class="add-btn" onclick="showAddTask(${pi},event)">+ Add</button></div>`;
+    sec.appendChild(hdr);
+
+    filtered.forEach(t=>{
+      const ti=phase.tasks.indexOf(t);
+      const key=`${pi}-${ti}`;
+      const over=isOverdue(t);
+      const isSel=selKey===key;
+      const flagWarn=t.flagged&&!t.flagNote;
+      const rc=ROLE_CSS[t.role]||'r-buyer';
+
+      const row=document.createElement('div');
+      row.className='task-row'+(currentView==='week'&&isThisWeek(t)?' week-hl':'')+(isSel?' sel':'')+(t.flagged?' flag-row':'');
+      row.onclick=()=>openDetail(pi,ti);
+      row.innerHTML=
+        `<div style="width:8px;height:8px;border-radius:50%;background:${priColor(t.priority)};flex-shrink:0;"></div>`+
+        `<div class="flag-ic${t.flagged?' on':''}${flagWarn?' flag-warn':''}">&#9873;</div>`+
+        `<div style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;">`+
+          `<span class="tname${t.prog>=100?' done':''}">${t.task}</span>`+
+          `${t.notes?'<div class="notes-dot"></div>':''}`+
+          `${t.custom?'<span style="font-size:10px;color:var(--muted);flex-shrink:0;">custom</span>':''}`+
+        `</div>`+
+        `<div style="position:relative;"><span class="rpill ${rc}" onclick="showOwnerDd(event,${pi},${ti})" title="Click to change owner">${t.role} &#9662;</span></div>`+
+        `<div><div class="pbar"><div style="width:${t.prog}%;height:100%;border-radius:99px;background:${pFill(t.prog)};"></div></div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${t.prog}%</div></div>`+
+        `<div class="due-cell${over?' od':''}">${over?'Overdue':fmtDue(t)}</div>`;
+      sec.appendChild(row);
+    });
+
+    if(addingPhase===pi){
+      const form=document.createElement('div');form.className='add-form';
+      form.innerHTML=`
+        <input id="nt-${pi}" class="at-inp" placeholder="Task name..." onkeydown="if(event.key==='Enter')commitAdd(${pi});if(event.key==='Escape')cancelAdd();" onclick="event.stopPropagation()">
+        <select id="nr-${pi}" class="at-sel">${ROLES.map(r=>`<option>${r}</option>`).join('')}</select>
+        <input id="nd-${pi}" type="date" class="at-inp" style="font-size:11px;">
+        <button class="xbtn s100" onclick="commitAdd(${pi})">Add</button>
+        <button class="xbtn" onclick="cancelAdd()">Cancel</button>`;
+      sec.appendChild(form);
+    }
+    list.appendChild(sec);
+  });
+
+  if(!any)list.innerHTML='<div class="empty">No tasks match this filter.</div>';
+  if(reportOpen)buildReport();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderParticipants();
+render();
+</script>
+</body>
+</html>
