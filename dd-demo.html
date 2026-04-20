@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tether — Deal Workspace Demo</title>
+<meta name="description" content="See how Tether keeps your entire deal team aligned from LOI to close."/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0A1628;color:#F5F2EC;min-height:100vh;}
+:root{
+  --navy:#0A1628;--navy2:#1A2F50;--navy3:#2A4A7A;
+  --teal:#00C9A7;--teal-dim:#00A388;--teal-bg:rgba(0,201,167,0.08);--teal-bd:rgba(0,201,167,0.2);
+  --warm:#F5F2EC;--muted:#9AA5B4;--border:#1E3A5F;
+  --amber:#E8A020;--danger:#E24B4A;
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:0.5px solid var(--border);background:rgba(10,22,40,0.97);position:sticky;top:0;z-index:200;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-wordmark{font-size:17px;font-weight:700;letter-spacing:-.5px;color:var(--warm);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.demo-badge{font-size:11px;padding:3px 10px;border-radius:99px;background:rgba(232,160,32,0.12);color:var(--amber);border:0.5px solid rgba(232,160,32,0.3);font-weight:500;}
+.nav-cta{font-size:13px;padding:7px 16px;border-radius:7px;background:var(--teal);color:var(--navy);font-weight:600;text-decoration:none;transition:background .15s;}
+.nav-cta:hover{background:var(--teal-dim);}
+.app{max-width:1000px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+.deal-header{background:var(--navy2);border:0.5px solid var(--border);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.deal-meta{display:flex;gap:1.5rem;margin-top:.6rem;flex-wrap:wrap;}
+.meta-label{font-size:11px;color:var(--muted);}
+.meta-value{font-size:13px;font-weight:500;color:var(--warm);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.stat-card{background:var(--navy2);border-radius:8px;padding:.65rem 1rem;}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.stat-value{font-size:20px;font-weight:600;}
+.controls{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+.toggle-group{display:flex;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;}
+.toggle-btn{padding:6px 14px;font-size:13px;background:transparent;border:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.toggle-btn.active{background:var(--navy2);color:var(--warm);font-weight:500;}
+.filter-sel{padding:6px 10px;font-size:13px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);cursor:pointer;}
+.badge-week{font-size:12px;padding:4px 10px;border-radius:8px;background:var(--teal-bg);color:var(--teal);font-weight:500;border:0.5px solid var(--teal-bd);}
+.col-headers{display:grid;grid-template-columns:10px 16px 1fr 96px 80px 54px;gap:8px;padding:4px 8px;margin-bottom:2px;align-items:center;}
+.col-hdr{font-size:11px;color:var(--muted);}
+.phase-sec{margin-bottom:1.25rem;}
+.phase-hdr{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 0 4px;border-bottom:0.5px solid var(--border);margin-bottom:2px;display:flex;align-items:center;justify-content:space-between;}
+.add-task-btn{font-size:11px;padding:2px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);}
+.add-task-btn:hover{background:var(--navy2);}
+.task-row{display:grid;grid-template-columns:10px 16px 1fr 96px 80px 54px;gap:8px;align-items:center;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .1s;position:relative;}
+.task-row:hover{background:var(--navy2);}
+.task-row.week-hl{border-left:3px solid var(--teal);padding-left:5px;border-radius:0;}
+.task-row.sel{background:var(--navy2);}
+.pdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.flag-ic{font-size:12px;opacity:.2;}
+.flag-ic.on{opacity:1;}
+.tname{font-size:13px;color:var(--warm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tname.done{text-decoration:line-through;color:var(--muted);}
+.rpill{font-size:11px;padding:3px 8px;border-radius:99px;text-align:center;white-space:nowrap;cursor:pointer;position:relative;}
+.rf{background:#E6F1FB;color:#0C447C;}
+.ra{background:#EEEDFE;color:#3C3489;}
+.rc{background:#E1F5EE;color:#085041;}
+.rb{background:#FAEEDA;color:#633806;}
+.rl{background:#FAECE7;color:#712B13;}
+.pbar{height:5px;background:var(--navy3);border-radius:99px;overflow:hidden;}
+.pfill{height:100%;border-radius:99px;transition:width .3s;}
+.p100{background:var(--teal);}.p50{background:var(--amber);}.p0{background:#2A4A7A;}
+.due-cell{font-size:11px;color:var(--muted);text-align:right;}
+.due-cell.od{color:var(--danger);font-weight:500;}
+.detail-panel{background:var(--navy);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;display:none;}
+.detail-panel.open{display:block;}
+.d-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.d-title{font-size:15px;font-weight:600;flex:1;color:var(--warm);}
+.d-phase{font-size:11px;color:var(--muted);font-weight:400;}
+.d-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;background:var(--navy2);padding:10px 12px;border-radius:8px;border:0.5px solid var(--border);}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.d-field{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:11px;color:var(--muted);}
+.btn-grp{display:flex;gap:6px;flex-wrap:wrap;}
+.xbtn{font-size:12px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s;}
+.xbtn:hover{background:var(--navy2);}
+.xbtn.s0{background:var(--navy2);color:var(--warm);font-weight:500;}
+.xbtn.s50{background:rgba(232,160,32,0.12);color:var(--amber);border-color:var(--amber);font-weight:500;}
+.xbtn.s100{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);font-weight:500;}
+.xbtn.shi{background:rgba(226,74,74,0.1);color:var(--danger);border-color:var(--danger);font-weight:500;}
+.xbtn.sme{background:rgba(232,160,32,0.1);color:var(--amber);border-color:var(--amber);font-weight:500;}
+.xbtn.slo{background:var(--navy2);color:var(--muted);font-weight:500;}
+.xbtn.flag-act{background:rgba(226,74,74,0.1);color:var(--danger);border-color:var(--danger);}
+.own-sel{font-size:12px;padding:5px 8px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy2);color:var(--warm);cursor:pointer;width:100%;}
+.notes-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy2);color:var(--warm);resize:vertical;min-height:60px;font-family:inherit;line-height:1.5;}
+.notes-ta:focus{outline:none;border-color:var(--teal);}
+.flag-box{background:rgba(226,74,74,0.07);border:0.5px solid rgba(226,74,74,0.2);border-radius:8px;padding:10px 12px;margin-top:10px;}
+.flag-lbl{font-size:12px;font-weight:600;color:var(--danger);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.flag-req{font-size:11px;color:var(--danger);margin-left:auto;}
+.flag-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:7px;border:1.5px solid var(--danger);background:rgba(226,74,74,0.04);color:var(--warm);resize:vertical;min-height:52px;font-family:inherit;line-height:1.5;}
+.flag-ta:focus{outline:none;}
+.flag-ta.ok{border-color:rgba(226,74,74,0.3);}
+.empty-st{text-align:center;padding:2rem;color:var(--muted);font-size:14px;}
+.owner-dd{position:absolute;top:100%;left:0;z-index:100;background:var(--navy2);border:0.5px solid var(--border);border-radius:8px;min-width:130px;margin-top:3px;overflow:hidden;}
+.owner-dd-item{padding:8px 12px;font-size:13px;cursor:pointer;color:var(--warm);}
+.owner-dd-item:hover{background:var(--navy3);}
+.week-report{background:var(--navy2);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;}
+.wr-header{padding:1rem 1.25rem;border-bottom:0.5px solid var(--border);}
+.wr-subject{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.wr-subject-val{font-size:13px;font-weight:600;color:var(--warm);background:var(--navy3);padding:3px 10px;border-radius:6px;display:inline-block;}
+.wr-body{padding:1rem 1.25rem;}
+.wr-sec-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid var(--border);}
+.wr-sec-title.red{color:var(--danger);}
+.wr-sec-title.amber{color:var(--amber);}
+.wr-sec-title.green{color:var(--teal);}
+.wr-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);}
+.wr-item:last-child{border-bottom:none;}
+.wr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.wr-dot.red{background:var(--danger);}
+.wr-dot.amber{background:var(--amber);}
+.wr-dot.green{background:var(--teal);}
+.wr-name{font-size:13px;font-weight:500;color:var(--warm);}
+.wr-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.wr-flag-note{font-size:12px;color:var(--danger);background:rgba(226,74,74,0.07);border-radius:6px;padding:5px 8px;margin-top:4px;line-height:1.5;}
+.wr-sec{margin-bottom:1.25rem;}
+.view-tabs{display:flex;gap:0;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1rem;width:fit-content;}
+.view-tab{padding:6px 16px;font-size:12px;background:transparent;border:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.view-tab.active{background:var(--navy2);color:var(--warm);font-weight:500;}
+.add-form{background:var(--navy2);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:4px;display:grid;grid-template-columns:1fr 110px 90px 80px auto auto;gap:8px;align-items:center;}
+.at-inp{font-size:13px;padding:5px 8px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);width:100%;}
+.at-inp:focus{outline:none;border-color:var(--teal);}
+.at-sel{font-size:12px;padding:5px 6px;border-radius:7px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);width:100%;}
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--teal);color:var(--navy);font-size:13px;font-weight:600;padding:8px 20px;border-radius:99px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+.sched-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:.75rem 1rem;background:var(--navy2);border-radius:8px;margin-bottom:1rem;border:0.5px solid var(--border);}
+.day-btn{font-size:12px;padding:4px 9px;border-radius:6px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);}
+.day-btn.sel{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd);font-weight:500;}
+.time-sel{font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);cursor:pointer;}
+.preview-btn{font-size:12px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--border);background:transparent;cursor:pointer;color:var(--warm);margin-left:auto;}
+.preview-btn:hover{background:var(--navy3);}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+      <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" stroke-width="2"/>
+      <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
+    </svg>
+    <span class="nav-wordmark">tether</span>
+  </a>
+  <div class="nav-right">
+    <span class="demo-badge">Interactive demo</span>
+    <a href="https://buy.stripe.com/cNi5kEfuTdKh26N4IJcIE00" class="nav-cta">Start your deal — $197</a>
+  </div>
+</nav>
+
+<div class="app">
+
+  <!-- DEAL HEADER -->
+  <div class="deal-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Active deal</div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:-.3px;">Apex Property Services</div>
+      </div>
+      <div style="font-size:13px;padding:6px 14px;border-radius:8px;background:var(--navy3);color:var(--muted);">
+        <span style="font-weight:600;color:var(--danger);" id="days-left">18</span> days remaining in DD
+      </div>
+    </div>
+    <div class="deal-meta">
+      <div><div class="meta-label">Start</div><div class="meta-value">Mar 17, 2026</div></div>
+      <div><div class="meta-label">DD deadline</div><div class="meta-value">Apr 16, 2026</div></div>
+      <div><div class="meta-label">Closing target</div><div class="meta-value">May 28, 2026</div></div>
+      <div style="margin-left:auto;"><div class="meta-label">Document folder</div><a href="#" style="font-size:13px;color:var(--teal);text-decoration:none;">&#128193; Deal Documents</a></div>
+    </div>
+    <div style="margin-top:.75rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:12px;color:var(--muted);">Overall deal progress</span>
+        <span style="font-size:12px;font-weight:600;color:var(--warm);" id="overall-pct">0%</span>
+      </div>
+      <div style="height:5px;background:var(--navy3);border-radius:99px;overflow:hidden;">
+        <div id="overall-fill" style="height:100%;border-radius:99px;background:var(--teal);transition:width .4s;width:0%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total tasks</div><div class="stat-value" id="s-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">Complete</div><div class="stat-value" style="color:var(--teal);" id="s-done">0</div></div>
+    <div class="stat-card"><div class="stat-label">This week</div><div class="stat-value" style="color:#85B7EB;" id="s-week">0</div></div>
+    <div class="stat-card"><div class="stat-label">Flags / issues</div><div class="stat-value" style="color:var(--danger);" id="s-flags">0</div></div>
+  </div>
+
+  <!-- REPORT SCHEDULER -->
+  <div class="sched-bar">
+    <span style="font-size:13px;color:var(--muted);">Weekly report sends</span>
+    <div style="display:flex;gap:4px;" id="day-btns">
+      <button class="day-btn" onclick="setDay('Mon')">Mon</button>
+      <button class="day-btn" onclick="setDay('Tue')">Tue</button>
+      <button class="day-btn" onclick="setDay('Wed')">Wed</button>
+      <button class="day-btn sel" onclick="setDay('Thu')">Thu</button>
+      <button class="day-btn" onclick="setDay('Fri')">Fri</button>
+    </div>
+    <select class="time-sel" id="report-time">
+      <option>6:00 AM</option><option>7:00 AM</option><option selected>8:00 AM</option>
+      <option>9:00 AM</option><option>10:00 AM</option>
+    </select>
+    <span style="font-size:12px;color:var(--muted);">to all participants</span>
+    <button class="preview-btn" onclick="toggleReport()">Preview weekly report</button>
+  </div>
+
+  <!-- REPORT PANEL -->
+  <div id="report-panel" style="display:none;margin-bottom:1rem;"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="view-tabs">
+      <button class="view-tab" id="btn-all" onclick="setView('all')">All tasks</button>
+      <button class="view-tab active" id="btn-week" onclick="setView('week')">This week</button>
+      <button class="view-tab" id="btn-flags" onclick="setView('flags')">&#9873; Flagged</button>
+      <button class="view-tab" id="btn-high" onclick="setView('high')">High priority</button>
+    </div>
+    <select class="filter-sel" id="role-f" onchange="render()">
+      <option value="all">All roles</option>
+      <option value="Buyer">Buyer</option>
+      <option value="Deal Team">Deal Team</option>
+      <option value="Ops Team">Ops Team</option>
+      <option value="Advisor">Advisor</option>
+      <option value="Lawyer">Lawyer</option>
+    </select>
+    <select class="filter-sel" id="phase-f" onchange="render()">
+      <option value="all">All phases</option>
+      <option value="Documents">Documents</option>
+      <option value="Financing">Financing</option>
+      <option value="Financial DD">Financial DD</option>
+      <option value="Legal DD">Legal DD</option>
+      <option value="Operations DD">Operations DD</option>
+      <option value="Marketing DD">Marketing DD</option>
+      <option value="Team DD">Team DD</option>
+      <option value="Closing">Closing</option>
+    </select>
+    <span class="badge-week">Week of Apr 14</span>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div id="detail-panel" class="detail-panel"></div>
+
+  <!-- COL HEADERS -->
+  <div class="col-headers">
+    <span class="col-hdr"></span><span class="col-hdr"></span>
+    <span class="col-hdr">Task</span>
+    <span class="col-hdr">Owner</span>
+    <span class="col-hdr">Progress</span>
+    <span class="col-hdr" style="text-align:right;">Due</span>
+  </div>
+
+  <div id="task-list"></div>
+
+</div>
+
+<script>
+const TODAY=new Date(2026,3,16),WS=new Date(2026,3,14),WE=new Date(2026,3,20);
+const ROLES=['Buyer','Deal Team','Ops Team','Advisor','Lawyer'];
+const RC={'Buyer':'rf','Deal Team':'ra','Ops Team':'rc','Advisor':'rb','Lawyer':'rl'};
+const DESCS={
+  'LOI Signed':'The Letter of Intent has been signed by both parties. This marks the official start of the due diligence period and your 30-day clock.',
+  'Schedule weekly standing meeting':'A recurring weekly call is being set up with all stakeholders to review progress, surface blockers, and keep the deal on track.',
+  '3yrs taxes':'Request 3 years of business tax returns from the seller and upload them to the Google Drive folder. Compare figures to the P&Ls to verify consistency.',
+  '3yrs PNL':'Request 3 years of Profit & Loss statements from the seller. Look for trends, unusual line items, and revenue consistency across years.',
+  'Complete Rent Roll':'Obtain the current rent roll from the seller showing all managed properties, management fees, lease terms, and contract details.',
+  'All Management Agreements':'Collect all property management contracts currently in place. Your attorney will verify they are assignable to you as the new owner.',
+  'Identify transaction attorney':'Engage an attorney experienced in business acquisitions to guide you through legal due diligence and draft the purchase agreement.',
+  'Lien search':'Attorney conducts a lien search on the business and any assets included in the deal.',
+  'Draft Purchase Agreement':'Attorney drafts the asset purchase agreement based on agreed deal terms. This is the primary legal document for the transaction.',
+  'Quality of earnings assessment':'Normalize the financials by identifying add-backs — owner expenses that won\'t carry over — to arrive at the true SDE of the business.',
+  'Complete Sources & Uses':'Document all sources of capital (SBA loan, equity, seller note) and all uses (purchase price, working capital, closing costs).',
+  'Confirm deal terms':'Final review and confirmation of all deal terms before the purchase agreement is drafted.',
+  'Final Go / No-Go Decision':'Based on everything uncovered in due diligence, make your final decision to proceed to closing or exit the deal.',
+  'Closing':'Execute the purchase agreement, transfer funds, and officially take ownership of the business.',
+  'View-only access to software':'Request read-only access to PM software to review portfolio, workflows, and data integrity.',
+  'Trust account review':'Ops team reviews trust account balances and transaction history for compliance.',
+};
+function getDesc(n){for(const k of Object.keys(DESCS)){if(n.toLowerCase().includes(k.toLowerCase()))return DESCS[k];}return 'Complete this task as part of the due diligence process. Your advisor is available to assist if you have questions.';}
+
+const PHASES=[
+  {name:'Documents',tasks:[
+    {task:'LOI Signed',role:'Buyer',prog:100,end:new Date(2026,2,17),priority:'low',flagged:false,flagNote:'',notes:'Signed and countersigned Mar 17.'},
+    {task:'Schedule weekly standing meeting',role:'Deal Team',prog:100,end:new Date(2026,2,18),priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'3yrs taxes',role:'Buyer',prog:0,end:new Date(2026,2,23),priority:'high',flagged:true,flagNote:'2022 return shows unusual spike in owner compensation — needs explanation before financial DD proceeds.',notes:'Requested from seller 3/17. Follow up sent 3/24.'},
+    {task:'3yrs PNL',role:'Buyer',prog:50,end:new Date(2026,2,23),priority:'high',flagged:false,flagNote:'',notes:'2023 and 2024 received. Still waiting on 2022.'},
+    {task:'Complete Rent Roll',role:'Buyer',prog:50,end:new Date(2026,2,23),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'All Management Agreements',role:'Buyer',prog:0,end:new Date(2026,2,23),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Verification of security deposits',role:'Buyer',prog:0,end:new Date(2026,2,23),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Upload all documents to Google Drive',role:'Buyer',prog:0,end:new Date(2026,2,23),priority:'low',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Financing',tasks:[
+    {task:'Interview and select a lender',role:'Buyer',prog:100,end:new Date(2026,2,23),priority:'high',flagged:false,flagNote:'',notes:'Going with Live Oak Bank.'},
+    {task:'Complete SBA form 413',role:'Buyer',prog:50,end:new Date(2026,2,22),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Complete 24 month projection model',role:'Buyer',prog:0,end:new Date(2026,2,26),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Submit underwriting requirements',role:'Buyer',prog:0,end:new Date(2026,3,8),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Funding completed',role:'Buyer',prog:0,end:new Date(2026,3,16),priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Financial DD',tasks:[
+    {task:'Quality of earnings assessment',role:'Deal Team',prog:50,end:new Date(2026,2,22),priority:'high',flagged:true,flagNote:'Add-backs appear inflated. Owner expensing personal vehicle, boat insurance, and two family members on payroll. True SDE may be 15–20% lower than claimed.',notes:'Advisor reviewing normalized model this week.'},
+    {task:'Tax returns match PNLs',role:'Deal Team',prog:100,end:new Date(2026,2,19),priority:'high',flagged:false,flagNote:'',notes:'Confirmed match on 2023 and 2024.'},
+    {task:'Review assets on balance sheet',role:'Deal Team',prog:0,end:new Date(2026,2,24),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Complete Sources & Uses',role:'Buyer',prog:0,end:new Date(2026,3,7),priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Legal DD',tasks:[
+    {task:'Identify transaction attorney',role:'Buyer',prog:100,end:new Date(2026,2,25),priority:'low',flagged:false,flagNote:'',notes:'Engaged Smith & Associates.'},
+    {task:'Ensure all contracts are assignable',role:'Buyer',prog:0,end:new Date(2026,2,26),priority:'high',flagged:true,flagNote:'3 management agreements have non-assignment clauses. Seller must obtain written consent from those property owners before close.',notes:''},
+    {task:'Lien search',role:'Lawyer',prog:0,end:new Date(2026,3,11),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Review insurance coverage',role:'Buyer',prog:0,end:new Date(2026,2,30),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Confirm deal terms',role:'Buyer',prog:0,end:new Date(2026,3,16),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Draft Purchase Agreement',role:'Lawyer',prog:0,end:new Date(2026,3,19),priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Operations DD',tasks:[
+    {task:'View-only access to software',role:'Ops Team',prog:0,end:new Date(2026,3,9),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Trust account review',role:'Ops Team',prog:0,end:new Date(2026,3,9),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Build org chart and identify key personnel',role:'Buyer',prog:0,end:new Date(2026,3,8),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Interview key employees',role:'Buyer',prog:0,end:new Date(2026,3,9),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Conduct portfolio inspection — random sample',role:'Buyer',prog:0,end:new Date(2026,3,12),priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Marketing DD',tasks:[
+    {task:'Review current marketing strategies',role:'Buyer',prog:0,end:new Date(2026,3,13),priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Website transition plan',role:'Ops Team',prog:0,end:new Date(2026,3,16),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Create client retention plan',role:'Advisor',prog:0,end:new Date(2026,3,18),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Business takeover 90-day plan',role:'Advisor',prog:0,end:new Date(2026,3,18),priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Team DD',tasks:[
+    {task:'Review employee agreements',role:'Buyer',prog:0,end:new Date(2026,3,14),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Schedule meet-the-team',role:'Buyer',prog:0,end:new Date(2026,3,18),priority:'medium',flagged:false,flagNote:'',notes:''},
+    {task:'Create new KPIs and incentive plan',role:'Buyer',prog:0,end:new Date(2026,3,15),priority:'low',flagged:false,flagNote:'',notes:''},
+    {task:'Draft new employee agreements',role:'Lawyer',prog:0,end:new Date(2026,3,16),priority:'medium',flagged:false,flagNote:'',notes:''},
+  ]},
+  {name:'Closing',tasks:[
+    {task:'Final Go / No-Go Decision',role:'Buyer',prog:0,end:new Date(2026,3,27),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Prepare all final closing docs',role:'Lawyer',prog:0,end:new Date(2026,4,19),priority:'high',flagged:false,flagNote:'',notes:''},
+    {task:'Closing',role:'Buyer',prog:0,end:new Date(2026,4,20),priority:'high',flagged:false,flagNote:'',notes:''},
+  ]},
+];
+
+let currentView='week',selKey=null,reportOpen=false,reportDay='Thu',openOwnerDd=null,addingPhase=null;
+
+function isThisWeek(t){return t.end>=WS&&t.end<=WE;}
+function isOverdue(t){return t.end<TODAY&&t.prog<100;}
+function fmt(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function pFill(p){return p>=100?'p100':p>0?'p50':'p0';}
+function priColor(p){return p==='high'?'#E24B4A':p==='medium'?'#E8A020':'#5F5E5A';}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function setDay(d){
+  reportDay=d;
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.toggle('sel',b.textContent===d));
+  if(reportOpen)buildReport();
+}
+
+function setView(v){
+  currentView=v;
+  ['all','week','flags','high'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',v===x));
+  closeOwnerDd();render();
+}
+
+function closeOwnerDd(){if(openOwnerDd){openOwnerDd.remove();openOwnerDd=null;}}
+document.addEventListener('click',()=>closeOwnerDd());
+
+function showOwnerDd(e,pi,ti){
+  e.stopPropagation();closeOwnerDd();
+  const pill=e.currentTarget;
+  const dd=document.createElement('div');dd.className='owner-dd';
+  ROLES.forEach(r=>{
+    const item=document.createElement('div');item.className='owner-dd-item';
+    item.textContent=r;
+    if(r===PHASES[pi].tasks[ti].role)item.style.color='#00C9A7';
+    item.onclick=ev=>{ev.stopPropagation();PHASES[pi].tasks[ti].role=r;closeOwnerDd();render();if(selKey===pi+'-'+ti)buildDetail(pi,ti);};
+    dd.appendChild(item);
+  });
+  pill.style.position='relative';pill.appendChild(dd);openOwnerDd=dd;
+}
+
+function openDetail(pi,ti){
+  const key=pi+'-'+ti;
+  const dp=document.getElementById('detail-panel');
+  if(selKey===key){selKey=null;dp.style.display='none';dp.classList.remove('open');render();return;}
+  selKey=key;buildDetail(pi,ti);
+}
+
+function buildDetail(pi,ti){
+  const t=PHASES[pi].tasks[ti];
+  const dp=document.getElementById('detail-panel');
+  dp.className='detail-panel open';
+  dp.innerHTML=`
+    <div class="d-top">
+      <div>
+        <div class="d-title">${t.task}</div>
+        <div class="d-phase">${PHASES[pi].name} &nbsp;·&nbsp; Owner: ${t.role}${isOverdue(t)?'&nbsp;·&nbsp;<span style="color:var(--danger)">Overdue</span>':''}</div>
+      </div>
+      <button class="xbtn${t.flagged?' flag-act':''}" onclick="attemptFlag(${pi},${ti})">${t.flagged?'&#9873; Flagged':'&#9873; Flag as issue'}</button>
+    </div>
+    <div class="d-desc">${getDesc(t.task)}</div>
+    <div class="d-grid">
+      <div class="d-field">
+        <span class="fl">Progress</span>
+        <div class="btn-grp">
+          <button class="xbtn${t.prog===0?' s0':''}" onclick="setProg(${pi},${ti},0)">Not started</button>
+          <button class="xbtn${t.prog===50?' s50':''}" onclick="setProg(${pi},${ti},50)">50% done</button>
+          <button class="xbtn${t.prog===100?' s100':''}" onclick="setProg(${pi},${ti},100)">Complete</button>
+        </div>
+      </div>
+      <div class="d-field">
+        <span class="fl">Priority</span>
+        <div class="btn-grp">
+          <button class="xbtn${t.priority==='high'?' shi':''}" onclick="setPri(${pi},${ti},'high')">High</button>
+          <button class="xbtn${t.priority==='medium'?' sme':''}" onclick="setPri(${pi},${ti},'medium')">Medium</button>
+          <button class="xbtn${t.priority==='low'?' slo':''}" onclick="setPri(${pi},${ti},'low')">Low</button>
+        </div>
+      </div>
+      <div class="d-field">
+        <span class="fl">Owner</span>
+        <select class="own-sel" onchange="PHASES[${pi}].tasks[${ti}].role=this.value;render();">
+          ${ROLES.map(r=>`<option${r===t.role?' selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <div class="d-field">
+        <span class="fl">Due date</span>
+        <input type="date" class="at-inp" value="${t.end.toISOString().split('T')[0]}" onchange="PHASES[${pi}].tasks[${ti}].end=new Date(this.value+'T12:00:00');render();" style="width:160px;">
+      </div>
+    </div>
+    <div class="d-field" style="margin-bottom:10px;">
+      <span class="fl">Notes <span style="font-size:10px;color:var(--muted);">(visible to all participants)</span></span>
+      <textarea class="notes-ta" placeholder="Add notes, context, or updates..." oninput="PHASES[${pi}].tasks[${ti}].notes=this.value">${t.notes}</textarea>
+    </div>
+    ${t.flagged?`
+    <div class="flag-box">
+      <div class="flag-lbl">&#9873; Issue / red flag details <span class="flag-req" id="freq">${!t.flagNote?'Note required':''}</span></div>
+      <textarea class="flag-ta${t.flagNote?' ok':''}" id="fta" placeholder="Describe the issue — this will appear in the weekly report..." oninput="setFlagNote(${pi},${ti},this.value)">${t.flagNote}</textarea>
+    </div>`:''}
+  `;
+}
+
+function attemptFlag(pi,ti){
+  const t=PHASES[pi].tasks[ti];
+  t.flagged=!t.flagged;if(!t.flagged)t.flagNote='';
+  buildDetail(pi,ti);render();
+  if(t.flagged)setTimeout(()=>{const ta=document.getElementById('fta');if(ta)ta.focus();},40);
+}
+function setFlagNote(pi,ti,v){
+  PHASES[pi].tasks[ti].flagNote=v;
+  const req=document.getElementById('freq'),ta=document.getElementById('fta');
+  if(req)req.textContent=v.trim()?'':'Note required';
+  if(ta)ta.classList.toggle('ok',!!v.trim());
+}
+function setProg(pi,ti,v){PHASES[pi].tasks[ti].prog=v;buildDetail(pi,ti);render();}
+function setPri(pi,ti,v){PHASES[pi].tasks[ti].priority=v;buildDetail(pi,ti);render();}
+
+function toggleReport(){
+  reportOpen=!reportOpen;
+  const rp=document.getElementById('report-panel');
+  if(reportOpen){buildReport();rp.style.display='block';}
+  else rp.style.display='none';
+}
+
+function buildReport(){
+  const rp=document.getElementById('report-panel');
+  const time=document.getElementById('report-time').value;
+  const flagged=[],overdue=[],completed=[];
+  PHASES.forEach(ph=>ph.tasks.forEach(t=>{
+    if(t.prog===100)completed.push({t,phase:ph.name});
+    if(t.flagged&&t.flagNote)flagged.push({t,phase:ph.name});
+    if(isOverdue(t))overdue.push({t,phase:ph.name});
+  }));
+  const missing=PHASES.reduce((a,ph)=>{ph.tasks.forEach(t=>{if(t.flagged&&!t.flagNote)a++;});return a;},0);
+  const total=PHASES.reduce((a,p)=>a+p.tasks.length,0);
+  const done=PHASES.reduce((a,p)=>{let d=0;p.tasks.forEach(t=>{if(t.prog===100)d++;});return a+d;},0);
+
+  rp.innerHTML=`<div class="week-report">
+    <div class="wr-header">
+      <div class="wr-subject">Subject</div>
+      <div class="wr-subject-val">Apex Property Services Diligence Weekly Report</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;">Sends every ${reportDay} at ${time} &nbsp;·&nbsp; To: Buyer, Deal Team, Ops Team, Advisor, Lawyer</div>
+      ${missing>0?`<div style="font-size:12px;color:var(--danger);background:rgba(226,74,74,0.07);padding:5px 10px;border-radius:6px;margin-top:8px;">${missing} flag${missing>1?'s':''} missing a note — add a note to include in report</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+        <div style="font-size:12px;color:var(--muted);">Overall progress: <strong style="color:var(--warm);">${Math.round(done/total*100)}% complete</strong></div>
+        <button class="preview-btn" style="margin-left:auto;" onclick="toast('Report sent: Apex Property Services Diligence Weekly Report')">Send now</button>
+      </div>
+    </div>
+    <div class="wr-body">
+      ${flagged.length?`<div class="wr-sec"><div class="wr-sec-title red">&#9873; Active issues (${flagged.length})</div>${flagged.map(({t,phase})=>`<div class="wr-item"><div class="wr-dot red"></div><div><div class="wr-name">${t.task}</div><div class="wr-sub">Owner: ${t.role} &nbsp;·&nbsp; Phase: ${phase}</div><div class="wr-flag-note">${t.flagNote}</div></div></div>`).join('')}</div>`:''}
+      ${overdue.length?`<div class="wr-sec"><div class="wr-sec-title amber">Overdue tasks (${overdue.length})</div>${overdue.map(({t,phase})=>`<div class="wr-item"><div class="wr-dot amber"></div><div><div class="wr-name">${t.task}</div><div class="wr-sub">Owner: ${t.role} &nbsp;·&nbsp; Phase: ${phase} &nbsp;·&nbsp; Was due ${fmt(t.end)}</div></div></div>`).join('')}</div>`:''}
+      ${completed.length?`<div class="wr-sec"><div class="wr-sec-title green">Completed (${completed.length})</div>${completed.map(({t,phase})=>`<div class="wr-item"><div class="wr-dot green"></div><div><div class="wr-name">${t.task}</div><div class="wr-sub">Owner: ${t.role} &nbsp;·&nbsp; Phase: ${phase}</div></div></div>`).join('')}</div>`:''}
+      ${!flagged.length&&!overdue.length&&!completed.length?'<div style="font-size:13px;color:var(--muted);padding:1rem 0;">No completed, flagged, or overdue tasks to report.</div>':''}
+    </div>
+  </div>`;
+}
+
+function showAddTask(pi,e){e.stopPropagation();addingPhase=pi;render();setTimeout(()=>{const inp=document.getElementById('nt-'+pi);if(inp)inp.focus();},30);}
+function cancelAdd(){addingPhase=null;render();}
+function commitAdd(pi){
+  const n=document.getElementById('nt-'+pi);
+  const r=document.getElementById('nr-'+pi);
+  const p=document.getElementById('np-'+pi);
+  const d=document.getElementById('nd-'+pi);
+  if(!n||!n.value.trim())return;
+  const end=d&&d.value?new Date(d.value+'T12:00:00'):new Date(TODAY.getTime()+7*86400000);
+  PHASES[pi].tasks.push({task:n.value.trim(),role:r?r.value:'Buyer',prog:0,end,priority:p?p.value:'medium',flagged:false,flagNote:'',notes:'',custom:true});
+  addingPhase=null;toast('Task added');render();
+}
+
+function render(){
+  const rf=document.getElementById('role-f').value;
+  const pf=document.getElementById('phase-f').value;
+  let total=0,done=0,week=0,flags=0;
+  PHASES.forEach(p=>p.tasks.forEach(t=>{
+    total++;if(t.prog>=100)done++;if(isThisWeek(t))week++;if(t.flagged)flags++;
+  }));
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-week').textContent=week;
+  document.getElementById('s-flags').textContent=flags;
+  const pct=Math.round(done/total*100);
+  document.getElementById('overall-pct').textContent=pct+'%';
+  document.getElementById('overall-fill').style.width=pct+'%';
+
+  const list=document.getElementById('task-list');list.innerHTML='';let any=false;
+  PHASES.forEach((phase,pi)=>{
+    if(pf!=='all'&&phase.name!==pf)return;
+    const filtered=phase.tasks.filter(t=>{
+      if(rf!=='all'&&t.role!==rf)return false;
+      if(currentView==='week'&&!isThisWeek(t))return false;
+      if(currentView==='flags'&&!t.flagged)return false;
+      if(currentView==='high'&&t.priority!=='high')return false;
+      return true;
+    });
+    if(!filtered.length&&addingPhase!==pi)return;
+    any=true;
+    const sec=document.createElement('div');sec.className='phase-sec';
+    const hdr=document.createElement('div');hdr.className='phase-hdr';
+    hdr.innerHTML=`<span>${phase.name}</span><button class="add-task-btn" onclick="showAddTask(${pi},event)">+ Add task</button>`;
+    sec.appendChild(hdr);
+
+    filtered.forEach(t=>{
+      const ti=phase.tasks.indexOf(t);
+      const key=pi+'-'+ti;
+      const over=isOverdue(t);
+      const isSel=selKey===key;
+      const flagWarn=t.flagged&&!t.flagNote;
+      const row=document.createElement('div');
+      row.className='task-row'+(currentView==='week'&&isThisWeek(t)?' week-hl':'')+(isSel?' sel':'');
+      row.onclick=()=>openDetail(pi,ti);
+      row.innerHTML=
+        `<div style="width:8px;height:8px;border-radius:50%;background:${priColor(t.priority)};flex-shrink:0;"></div>`+
+        `<div style="font-size:12px;opacity:${t.flagged?1:.18};position:relative;" title="${flagWarn?'Flag needs a note':t.flagged?'Issue flagged':''}">&#9873;${flagWarn?`<span style="position:absolute;top:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:var(--danger);display:block;"></span>`:''}</div>`+
+        `<div style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;">`+
+          `<span class="tname${t.prog>=100?' done':''}">${t.task}</span>`+
+          `${t.notes?'<span style="width:5px;height:5px;border-radius:50%;background:#185FA5;display:inline-block;flex-shrink:0;"></span>':''}`+
+          `${t.custom?'<span style="font-size:10px;color:var(--muted);flex-shrink:0;">custom</span>':''}`+
+        `</div>`+
+        `<div style="position:relative;"><span class="rpill ${RC[t.role]||'rf'}" onclick="showOwnerDd(event,${pi},${ti})" title="Click to change owner">${t.role} &#9662;</span></div>`+
+        `<div><div class="pbar"><div class="pfill ${pFill(t.prog)}" style="width:${t.prog}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${t.prog}%</div></div>`+
+        `<div class="due-cell${over?' od':''}">${fmt(t.end)}</div>`;
+      sec.appendChild(row);
+    });
+
+    if(addingPhase===pi){
+      const form=document.createElement('div');form.className='add-form';
+      form.innerHTML=`
+        <input id="nt-${pi}" class="at-inp" placeholder="Task name..." onkeydown="if(event.key==='Enter')commitAdd(${pi});if(event.key==='Escape')cancelAdd();" onclick="event.stopPropagation()">
+        <select id="nr-${pi}" class="at-sel">${ROLES.map(r=>`<option>${r}</option>`).join('')}</select>
+        <select id="np-${pi}" class="at-sel"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select>
+        <input id="nd-${pi}" type="date" class="at-inp" placeholder="Due date">
+        <button class="xbtn s100" onclick="commitAdd(${pi})">Add</button>
+        <button class="xbtn" onclick="cancelAdd()">Cancel</button>`;
+      sec.appendChild(form);
+    }
+    list.appendChild(sec);
+  });
+  if(!any)list.innerHTML='<div class="empty-st">No tasks match this filter.</div>';
+  if(reportOpen)buildReport();
+}
+
+render();
+</script>
+</body>
+</html>
