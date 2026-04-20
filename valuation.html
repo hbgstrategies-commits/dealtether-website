@@ -204,50 +204,36 @@ input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;ba
 .fci:focus{border-color:var(--t-accent);}
 .disc{margin-top:20px;padding:12px 14px;background:rgba(154,165,180,0.08);border:1px solid rgba(154,165,180,0.15);border-radius:8px;font-size:10px;color:var(--t-muted);line-height:1.6;}
 @media(max-width:600px){.mbd,.sf3,.lg3,.rg3,.cg{grid-template-columns:1fr 1fr;}.lg2,.rg2,.ng{grid-template-columns:1fr;}}
-.gate-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,22,40,0.92);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;}
-.gate-overlay.active{display:flex;}
-.gate-modal{background:var(--t-surface);border:1px solid var(--t-border);border-radius:16px;padding:2rem;max-width:420px;width:100%;text-align:center;}
-.gate-icon{margin:0 auto 1rem;}
-.gate-title{font-size:20px;font-weight:600;color:var(--t-text);margin-bottom:.5rem;}
-.gate-sub{font-size:13px;color:var(--t-muted);line-height:1.6;margin-bottom:1.25rem;}
-.gate-input{width:100%;background:var(--t-elevated);border:1px solid var(--t-border);border-radius:8px;color:var(--t-text);padding:10px 14px;font-size:14px;outline:none;margin-bottom:.75rem;transition:border-color .2s;}
-.gate-input:focus{border-color:var(--t-accent);}
-.gate-input::placeholder{color:var(--t-muted);}
-.gate-btn{width:100%;padding:11px;border-radius:8px;background:var(--t-accent);color:#0A1628;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:opacity .15s;}
-.gate-btn:hover{opacity:.88;}
-.gate-note{font-size:11px;color:var(--t-muted);margin-top:.75rem;line-height:1.5;}
-.gate-error{font-size:12px;color:var(--t-red);margin-bottom:.5rem;display:none;}
+/* Gate removed — analysis is free and unlimited */
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;margin-bottom:1rem;border-bottom:1px solid var(--t-border);}
 .top-nav-back{font-size:13px;color:var(--t-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s;}
 .top-nav-back:hover{color:var(--t-text);}
-.dd-cta-banner{background:rgba(0,201,167,0.07);border:1px solid rgba(0,201,167,0.22);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.dd-cta-text{font-size:13px;color:var(--t-muted);line-height:1.5;}
-.dd-cta-text strong{color:var(--t-text);display:block;font-size:14px;margin-bottom:3px;}
-.dd-cta-btn{font-size:13px;padding:9px 20px;border-radius:8px;background:var(--t-accent);color:#0A1628;font-weight:600;border:none;cursor:pointer;text-decoration:none;white-space:nowrap;transition:opacity .15s;}
-.dd-cta-btn:hover{opacity:.88;}
+.dd-cta-banner{background:linear-gradient(135deg,rgba(0,201,167,0.12) 0%,rgba(0,163,136,0.06) 100%);border:1.5px solid rgba(0,201,167,0.35);border-radius:16px;padding:1.75rem 1.75rem;margin-top:2rem;}
+.dd-cta-eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t-accent);margin-bottom:.6rem;}
+.dd-cta-headline{font-size:22px;font-weight:700;color:var(--t-text);line-height:1.2;margin-bottom:.5rem;letter-spacing:-.3px;}
+.dd-cta-headline span{color:var(--t-accent);}
+.dd-cta-sub{font-size:13px;color:var(--t-muted);line-height:1.6;margin-bottom:1.25rem;max-width:520px;}
+.dd-cta-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.dd-cta-btn{font-size:14px;padding:12px 28px;border-radius:9px;background:var(--t-accent);color:#0A1628;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s;letter-spacing:-.1px;}
+.dd-cta-btn:hover{background:#00A388;transform:translateY(-1px);}
+.dd-cta-ghost{font-size:13px;padding:12px 20px;border-radius:9px;background:transparent;color:var(--t-text);font-weight:500;border:1px solid var(--t-border);cursor:pointer;text-decoration:none;display:inline-block;transition:background .15s;}
+.dd-cta-ghost:hover{background:var(--t-surface);}
+.dd-cta-proof{display:flex;gap:1.25rem;margin-top:1rem;flex-wrap:wrap;}
+.dd-cta-proof-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t-muted);}
+.dd-cta-proof-dot{width:5px;height:5px;border-radius:50%;background:var(--t-accent);flex-shrink:0;}
+.dd-save-box{background:var(--t-surface);border:1px solid var(--t-border);border-radius:10px;padding:1rem 1.25rem;margin-top:1rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.dd-save-label{font-size:13px;color:var(--t-muted);flex:1;}
+.dd-save-input{background:var(--t-elevated);border:1px solid var(--t-border);border-radius:7px;color:var(--t-text);padding:8px 12px;font-size:13px;flex:1;min-width:200px;outline:none;transition:border-color .2s;}
+.dd-save-input:focus{border-color:var(--t-accent);}
+.dd-save-input::placeholder{color:var(--t-muted);}
+.dd-save-btn{font-size:13px;padding:8px 16px;border-radius:7px;background:var(--t-elevated);color:var(--t-text);font-weight:500;border:1px solid var(--t-border);cursor:pointer;transition:background .15s;white-space:nowrap;}
+.dd-save-btn:hover{background:var(--t-accent);color:#0A1628;border-color:var(--t-accent);}
+.dd-save-confirm{font-size:12px;color:var(--t-accent);display:none;margin-top:4px;}
 </style>
 </head>
 <body>
 
-<!-- EMAIL GATE OVERLAY -->
-<div class="gate-overlay" id="gate-overlay">
-  <div class="gate-modal">
-    <div class="gate-icon">
-      <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
-        <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
-        <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
-        <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" stroke-width="2"/>
-        <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
-      </svg>
-    </div>
-    <div class="gate-title">Your analysis is ready</div>
-    <div class="gate-sub">Enter your email to unlock your full valuation report — we'll also send you a copy to refer back to.</div>
-    <div class="gate-error" id="gate-error">Please enter a valid email address.</div>
-    <input class="gate-input" type="email" id="gate-email" placeholder="Your email address" autocomplete="email"/>
-    <button class="gate-btn" onclick="submitGate()">Unlock my analysis</button>
-    <div class="gate-note">No spam, ever. We'll send your analysis and occasional acquisition insights from Tether.</div>
-  </div>
-</div>
+<!-- No email gate — analysis is free and unlimited -->
 
 <div class="wrap">
   <!-- TOP NAV -->
@@ -338,7 +324,7 @@ input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;ba
     <div class="sec-title">Risk assessment</div>
     <div class="sec-sub">Rate each risk 0–5 in quarter increments. Zero means not present. Higher scores reduce the multiple.</div>
     <div id="riskRows"></div>
-    <div class="btn-row"><button class="btn btn-ghost" onclick="goStep(2)">← Back</button><button class="btn btn-primary" onclick="triggerGate()">Run analysis →</button></div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="goStep(2)">← Back</button><button class="btn btn-primary" onclick="runAnalysis()">Run analysis →</button></div>
     <div class="disc">Risk ratings are qualitative estimates only. Verify all risks with qualified professionals during due diligence.</div>
   </div>
 
@@ -353,8 +339,7 @@ input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;ba
         <strong>Ready to run due diligence on this deal?</strong>
         Tether gives you a full DD workspace — tasks, flags, weekly reports, and your whole team in one place.
       </div>
-      <!-- REPLACE: swap href with your $197 Stripe payment link -->
-      <a href="STRIPE_LINK_PER_DEAL" class="dd-cta-btn">Start your DD workspace — $197</a>
+      <a href="https://buy.stripe.com/cNi5kEfuTdKh26N4IJcIE00" class="dd-cta-btn">Start your DD workspace — $497</a>
     </div>
   </div>
 
@@ -363,6 +348,22 @@ input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;ba
     <div id="s5Content"></div>
     <div class="btn-row"><button class="btn btn-ghost" onclick="goStep(4)">← Back to analysis</button></div>
     <div class="disc">All cash flow, DSCR, WACC, and IRR figures are pre-tax estimates for illustrative purposes only. Consult a qualified M&A attorney, CPA, and lender before executing any acquisition. SBA loan eligibility subject to lender approval.</div>
+    <!-- STEP 5 BOTTOM CTA -->
+    <div class="dd-cta-banner" style="margin-top:1.5rem;">
+      <div class="dd-cta-eyebrow">Your deal structure is ready</div>
+      <div class="dd-cta-headline">Now execute it with <span>Tether</span></div>
+      <div class="dd-cta-sub">You have your offer range, your financing stack, and your 5-year model. The next step is running due diligence — organized, accountable, and tethered. Don't let the deal fall apart in DD.</div>
+      <div class="dd-cta-actions">
+        <a href="https://buy.stripe.com/cNi5kEfuTdKh26N4IJcIE00" class="dd-cta-btn">Start my DD workspace — $497</a>
+        <a href="/dd-demo" class="dd-cta-ghost" target="_blank">See an interactive demo →</a>
+      </div>
+      <div class="dd-cta-proof">
+        <div class="dd-cta-proof-item"><div class="dd-cta-proof-dot"></div>Pre-built DD template loads instantly</div>
+        <div class="dd-cta-proof-item"><div class="dd-cta-proof-dot"></div>Invite your attorney, broker & advisor via magic link</div>
+        <div class="dd-cta-proof-item"><div class="dd-cta-proof-dot"></div>Weekly report auto-emails all participants</div>
+        <div class="dd-cta-proof-item"><div class="dd-cta-proof-dot"></div>Nothing falls through. You close.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -506,10 +507,15 @@ function runAnalysis(){
   html+='<div id="growthWrap"></div>';
   html+='<div style="font-size:14px;font-weight:500;margin-bottom:10px;color:var(--t-text);">Napkin value scores</div><div class="ng">'+SF.map(function(f){var v=SC[f.key];var s=Array.from({length:5},function(_,i){return'<div class="st '+(i<Math.round(v)?'on':'off')+'"></div>';}).join('');return'<div class="ni"><div class="nc">'+f.label+'</div><div class="nv" style="color:'+(v>=4?'var(--t-accent)':v>=3?'var(--t-text)':'var(--t-amber)')+'">'+v.toFixed(2)+'</div><div class="sr">'+s+'</div></div>';}).join('')+'</div>';
   if(flaggedRisks.length>0){html+='<div class="rf-wrap"><div class="rf-title">Risk flags ('+flaggedRisks.length+')</div>'+flaggedRisks.map(function(f){var sl=sevL(f.score);return'<div class="rf-item"><div class="rf-dot"></div><span>'+f.label+(f.score>=4?' — critical':' — addressable via structure')+'</span><span class="rf-sev" style="background:'+sl[1]+';color:'+sl[2]+'">'+sl[0]+'</span></div>';}).join('')+'</div>';}
-  html+='<div style="background:rgba(0,201,167,0.07);border:1px solid rgba(0,201,167,0.2);border-radius:10px;padding:14px 16px;margin-top:4px;"><div style="font-size:13px;color:var(--t-accent);font-weight:500;margin-bottom:4px;">Ready to structure this deal?</div><div style="font-size:12px;color:var(--t-muted);line-height:1.6;">The multiple you select carries forward into the offer slider and 5-year forecast.</div></div>';
+  html+='<div style="background:rgba(0,201,167,0.07);border:1px solid rgba(0,201,167,0.2);border-radius:10px;padding:14px 16px;margin-top:4px;"><div style="font-size:13px;color:var(--t-accent);font-weight:500;margin-bottom:4px;">Ready to build your offer and financing stack?</div><div style="font-size:12px;color:var(--t-muted);line-height:1.6;">Step 5 builds your full deal structure — offer slider, SBA loan, seller note, DSCR, WACC, IRR, and a 5-year cash flow forecast. Then start your DD workspace and execute the deal.</div></div>';
   document.getElementById('aContent').innerHTML=html;
   var haEl=document.getElementById('aHA');if(haEl)haEl.style.color=haColor;
   goStep(4);
+  var ctaEl=document.getElementById('cta-deal-price');
+  if(ctaEl&&G.fairValue>0){
+    var fv=G.fairValue>=1000000?'$'+(G.fairValue/1000000).toFixed(2)+'M':'$'+Math.round(G.fairValue).toLocaleString();
+    ctaEl.textContent='your '+fv+' acquisition';
+  }
 }
 
 function drawChart(){
@@ -742,39 +748,21 @@ function buildSG(fv,co,cr,avgSDE,fr,opp,team,hist,marg,ask){
   return groups;
 }
 
-function triggerGate(){
-  var gateCleared=sessionStorage.getItem('tether_gate_cleared');
-  if(gateCleared){runAnalysis();return;}
-  document.getElementById('gate-overlay').classList.add('active');
-  setTimeout(function(){document.getElementById('gate-email').focus();},100);
-}
-
-function submitGate(){
-  var email=document.getElementById('gate-email').value.trim();
-  var errEl=document.getElementById('gate-error');
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    errEl.style.display='block';
+function saveAnalysis(){
+  var email=document.getElementById('save-email');
+  if(!email||!email.value.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())){
+    if(email){email.style.borderColor='var(--t-red)';setTimeout(function(){email.style.borderColor='';},1500);}
     return;
   }
-  errEl.style.display='none';
   fetch('https://formspree.io/f/xaqabooy',{
     method:'POST',
-    body:JSON.stringify({email:email,source:'valuation-tool-gate'}),
+    body:JSON.stringify({email:email.value.trim(),source:'valuation-tool-save',avgSDE:G.avgSDE,avgRev:G.avgRev,recMult:G.recMult,fairValue:G.fairValue}),
     headers:{'Content-Type':'application/json','Accept':'application/json'}
-  }).then(function(){
-    sessionStorage.setItem('tether_gate_cleared','1');
-    document.getElementById('gate-overlay').classList.remove('active');
-    runAnalysis();
-  }).catch(function(){
-    sessionStorage.setItem('tether_gate_cleared','1');
-    document.getElementById('gate-overlay').classList.remove('active');
-    runAnalysis();
-  });
+  }).catch(function(){});
+  var confirm=document.getElementById('save-confirm');
+  if(confirm){confirm.style.display='block';}
+  email.value='';
 }
-
-document.getElementById('gate-email').addEventListener('keydown',function(e){
-  if(e.key==='Enter')submitGate();
-});
 
 buildScoreRows();
 buildRiskRows();
