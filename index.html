@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tether — Deals close when they are tethered</title>
+<meta name="description" content="The deal execution platform that keeps buyers, advisors, brokers, and attorneys aligned from LOI to close. Due diligence, organized."/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0A1628;color:#F5F2EC;}
+:root{
+  --navy:#0A1628;
+  --navy2:#1A2F50;
+  --navy3:#2A4A7A;
+  --teal:#00C9A7;
+  --teal-dim:#00A388;
+  --warm:#F5F2EC;
+  --muted:#9AA5B4;
+  --border:#1E3A5F;
+  --amber:#E8A020;
+  --danger:#E24B4A;
+}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:rgba(10,22,40,0.97);z-index:100;backdrop-filter:blur(8px);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-wordmark{font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--warm);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-link{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .15s;}
+.nav-link:hover{color:var(--warm);}
+.nav-cta{font-size:13px;padding:7px 18px;border-radius:8px;background:var(--teal);color:var(--navy);font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:background .15s;}
+.nav-cta:hover{background:var(--teal-dim);}
+
+/* HERO */
+.hero{padding:5rem 2.5rem 4rem;max-width:860px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--teal);background:rgba(0,201,167,.1);border:0.5px solid rgba(0,201,167,.25);padding:5px 14px;border-radius:99px;margin-bottom:1.5rem;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.hero h1{font-size:54px;font-weight:700;line-height:1.1;letter-spacing:-1.5px;color:var(--warm);margin-bottom:1.25rem;}
+.hero h1 span{color:var(--teal);}
+.hero-sub{font-size:18px;color:var(--muted);line-height:1.6;max-width:580px;margin:0 auto 2rem;}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;}
+.btn-primary{font-size:15px;padding:12px 28px;border-radius:8px;background:var(--teal);color:var(--navy);font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-block;transition:background .15s;}
+.btn-primary:hover{background:var(--teal-dim);}
+.btn-secondary{font-size:15px;padding:12px 28px;border-radius:8px;background:transparent;color:var(--warm);font-weight:500;cursor:pointer;border:0.5px solid var(--border);text-decoration:none;display:inline-block;transition:background .15s;}
+.btn-secondary:hover{background:var(--navy2);}
+.hero-note{font-size:12px;color:var(--muted);}
+
+/* PROOF BAR */
+.proof-bar{border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:1.1rem 2.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;justify-content:center;}
+.proof-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
+.proof-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+
+/* APP PREVIEW */
+.preview-wrap{padding:3rem 2rem;max-width:900px;margin:0 auto;}
+.preview-frame{background:var(--navy2);border:0.5px solid var(--border);border-radius:16px;overflow:hidden;}
+.preview-bar{background:var(--navy);padding:.55rem 1rem;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--border);}
+.preview-dot{width:10px;height:10px;border-radius:50%;}
+.preview-url{flex:1;background:var(--navy2);border-radius:5px;padding:3px 10px;font-size:11px;color:var(--muted);text-align:center;}
+.preview-inner{padding:1.25rem;}
+.p-deal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.p-deal-name{font-size:16px;font-weight:600;color:var(--warm);}
+.p-badge{font-size:11px;padding:3px 10px;border-radius:99px;background:rgba(0,201,167,.15);color:var(--teal);font-weight:500;}
+.p-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.ps{background:var(--navy);border-radius:8px;padding:.55rem .75rem;}
+.ps-l{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.ps-v{font-size:16px;font-weight:600;}
+.p-tasks{display:flex;flex-direction:column;gap:4px;}
+.pt{display:grid;grid-template-columns:8px 1fr 80px 60px 52px;gap:8px;align-items:center;padding:6px 8px;border-radius:6px;background:var(--navy);}
+.pt-dot{width:8px;height:8px;border-radius:50%;}
+.pt-name{font-size:12px;color:var(--warm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pt-pill{font-size:10px;padding:2px 6px;border-radius:99px;text-align:center;}
+.pt-bar{height:4px;background:var(--navy3);border-radius:99px;overflow:hidden;}
+.pt-fill{height:100%;border-radius:99px;}
+.pt-due{font-size:10px;color:var(--muted);text-align:right;}
+.flag-row{background:rgba(226,74,74,.07);border:0.5px solid rgba(226,74,74,.18);}
+
+/* SECTIONS */
+.section-wrap{padding:4rem 2.5rem;max-width:1000px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--teal);text-transform:uppercase;text-align:center;margin-bottom:.75rem;}
+.section-title{font-size:34px;font-weight:700;letter-spacing:-.8px;text-align:center;color:var(--warm);margin-bottom:.75rem;line-height:1.2;}
+.section-sub{font-size:16px;color:var(--muted);text-align:center;max-width:540px;margin:0 auto 3rem;line-height:1.6;}
+
+/* VALUATION TOOL TEASER */
+.tool-teaser{background:var(--navy2);border:0.5px solid var(--border);border-radius:16px;padding:2.5rem;text-align:center;margin-bottom:1rem;}
+.tool-teaser-title{font-size:22px;font-weight:700;color:var(--warm);margin-bottom:.75rem;letter-spacing:-.4px;}
+.tool-teaser-sub{font-size:14px;color:var(--muted);line-height:1.6;max-width:480px;margin:0 auto 1.5rem;}
+.tool-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.75rem;}
+.tool-step{background:var(--navy);border:0.5px solid var(--border);border-radius:10px;padding:.75rem .5rem;text-align:center;}
+.tool-step-num{width:24px;height:24px;border-radius:50%;background:var(--teal);color:var(--navy);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;}
+.tool-step-label{font-size:11px;color:var(--muted);line-height:1.3;}
+.tool-cta{font-size:14px;padding:10px 24px;border-radius:8px;background:var(--teal);color:var(--navy);font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-block;transition:background .15s;}
+.tool-cta:hover{background:var(--teal-dim);}
+.tool-note{font-size:12px;color:var(--muted);margin-top:.75rem;}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.feat-card{background:var(--navy2);border:0.5px solid var(--border);border-radius:14px;padding:1.5rem;}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(0,201,167,.1);border:0.5px solid rgba(0,201,167,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;}
+.feat-title{font-size:15px;font-weight:600;color:var(--warm);margin-bottom:.5rem;}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* HOW IT WORKS */
+.how-wrap{padding:4rem 2.5rem;max-width:860px;margin:0 auto;}
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;}
+.step-connector{position:absolute;top:18px;left:calc(12.5% + 18px);width:calc(75% - 36px);height:1px;background:var(--border);}
+.step{text-align:center;padding:1.5rem 1rem;}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--teal);color:var(--navy);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.step-title{font-size:14px;font-weight:600;color:var(--warm);margin-bottom:.5rem;}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* WHO IT'S FOR */
+.who-outer{background:var(--navy2);padding:4rem 2.5rem;}
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:2.5rem;max-width:1000px;margin-left:auto;margin-right:auto;}
+.who-card{background:var(--navy);border:0.5px solid var(--border);border-radius:12px;padding:1.25rem;}
+.who-role{font-size:13px;font-weight:600;color:var(--warm);margin-bottom:4px;}
+.who-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:.75rem;}
+.who-tag{font-size:11px;padding:2px 8px;border-radius:99px;display:inline-block;}
+.tag-deal{background:rgba(0,201,167,.1);color:var(--teal);}
+.tag-adv{background:rgba(42,74,122,.5);color:#85B7EB;}
+.tag-ent{background:rgba(255,255,255,.06);color:var(--muted);}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:2.5rem;}
+.testi-card{background:var(--navy2);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;}
+.stars{color:var(--teal);font-size:12px;margin-bottom:.75rem;letter-spacing:2px;}
+.testi-quote{font-size:13px;color:var(--warm);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:8px;}
+.testi-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--teal);flex-shrink:0;}
+.testi-name{font-size:12px;font-weight:600;color:var(--warm);}
+.testi-role{font-size:11px;color:var(--muted);}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:2.5rem;}
+.price-card{background:var(--navy2);border:0.5px solid var(--border);border-radius:16px;padding:1.5rem;position:relative;}
+.price-card.featured{border-color:var(--teal);border-width:1.5px;}
+.price-featured-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);font-size:11px;background:var(--teal);color:var(--navy);padding:3px 14px;border-radius:0 0 8px 8px;font-weight:600;white-space:nowrap;}
+.price-name{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.price-amount{font-size:32px;font-weight:700;color:var(--warm);letter-spacing:-1px;margin-bottom:2px;}
+.price-period{font-size:12px;color:var(--muted);}
+.price-desc{font-size:12px;color:var(--muted);line-height:1.5;margin:.75rem 0 1rem;min-height:36px;}
+.price-btn{width:100%;padding:9px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:1.25rem;text-align:center;display:block;text-decoration:none;transition:all .15s;}
+.price-btn-primary{background:var(--teal);color:var(--navy);border:none;}
+.price-btn-primary:hover{background:var(--teal-dim);}
+.price-btn-secondary{background:transparent;color:var(--warm);border:0.5px solid var(--border);}
+.price-btn-secondary:hover{background:var(--navy3);}
+.price-feats{display:flex;flex-direction:column;gap:6px;}
+.pf{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--muted);line-height:1.4;}
+.pf-check{width:14px;height:14px;border-radius:50%;background:rgba(0,201,167,.15);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;}
+.price-overage{font-size:11px;background:rgba(232,160,32,.1);color:var(--amber);border-radius:6px;padding:4px 8px;margin-top:.75rem;line-height:1.4;}
+
+/* WAITLIST */
+.waitlist-outer{background:var(--navy2);border-top:0.5px solid var(--border);}
+.waitlist-inner{max-width:560px;margin:0 auto;padding:4rem 2rem;text-align:center;}
+.waitlist-title{font-size:28px;font-weight:700;letter-spacing:-.5px;color:var(--warm);margin-bottom:.75rem;}
+.waitlist-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:1.75rem;}
+.waitlist-form{display:flex;gap:8px;max-width:420px;margin:0 auto 1rem;}
+.waitlist-input{flex:1;font-size:14px;padding:10px 14px;border-radius:8px;border:0.5px solid var(--border);background:var(--navy);color:var(--warm);outline:none;transition:border-color .15s;}
+.waitlist-input:focus{border-color:var(--teal);}
+.waitlist-input::placeholder{color:var(--muted);}
+.waitlist-btn{font-size:14px;padding:10px 20px;border-radius:8px;background:var(--teal);color:var(--navy);font-weight:600;cursor:pointer;border:none;white-space:nowrap;transition:background .15s;}
+.waitlist-btn:hover{background:var(--teal-dim);}
+.waitlist-note{font-size:12px;color:var(--muted);}
+.waitlist-success{display:none;font-size:14px;color:var(--teal);padding:.75rem;background:rgba(0,201,167,.08);border:0.5px solid rgba(0,201,167,.2);border-radius:8px;margin-top:1rem;}
+
+/* CTA */
+.cta-section{padding:5rem 2.5rem;text-align:center;border-top:0.5px solid var(--border);}
+.cta-title{font-size:38px;font-weight:700;letter-spacing:-1px;color:var(--warm);margin-bottom:.75rem;line-height:1.2;}
+.cta-title span{color:var(--teal);}
+.cta-sub{font-size:16px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.cta-note{font-size:12px;color:var(--muted);margin-top:1rem;}
+
+/* FOOTER */
+.footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.footer-wordmark{font-size:15px;font-weight:700;color:var(--warm);}
+.footer-copy{font-size:12px;color:var(--muted);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-link{font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.footer-link:hover{color:var(--warm);}
+
+@media(max-width:700px){
+  .nav-links{display:none;}
+  .hero h1{font-size:36px;}
+  .features-grid,.who-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr;}
+  .steps-row{grid-template-columns:1fr 1fr;}
+  .step-connector{display:none;}
+  .tool-steps{grid-template-columns:repeat(3,1fr);}
+  .p-stats{grid-template-columns:repeat(2,1fr);}
+  .waitlist-form{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+      <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" stroke-width="2"/>
+      <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
+    </svg>
+    <span class="nav-wordmark">tether</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#who" class="nav-link">Who it's for</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="/valuation" class="nav-link">Valuation tool</a>
+  </div>
+  <!-- REPLACE: swap href with your $197 Stripe payment link -->
+  <a href="STRIPE_LINK_PER_DEAL" class="nav-cta">Start your first deal</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><div class="badge-dot"></div>Built for buyers, advisors, brokers &amp; operators</div>
+  <h1>Deals close when they are <span>tethered</span></h1>
+  <p class="hero-sub">The deal execution platform that keeps buyers, advisors, brokers, and attorneys aligned from LOI to close — and prevents deals from falling apart in due diligence.</p>
+  <div class="hero-actions">
+    <!-- REPLACE: swap href with your $197 Stripe payment link -->
+    <a href="STRIPE_LINK_PER_DEAL" class="btn-primary">Start your first deal — $197</a>
+    <a href="/valuation" class="btn-secondary">Try the valuation tool free</a>
+  </div>
+  <p class="hero-note">No account needed for participants &nbsp;·&nbsp; Magic link access &nbsp;·&nbsp; Cancel anytime</p>
+</section>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item"><div class="proof-dot"></div>Built for buyers, ETA &amp; search funders</div>
+  <div class="proof-item"><div class="proof-dot"></div>Used by acquisition advisors</div>
+  <div class="proof-item"><div class="proof-dot"></div>Trusted by business brokers</div>
+  <div class="proof-item"><div class="proof-dot"></div>Timeline auto-scales to your DD period</div>
+  <div class="proof-item"><div class="proof-dot"></div>Weekly report auto-emails all parties</div>
+</div>
+
+<!-- APP PREVIEW -->
+<div class="preview-wrap">
+  <div class="preview-frame">
+    <div class="preview-bar">
+      <div class="preview-dot" style="background:#E24B4A;"></div>
+      <div class="preview-dot" style="background:#E8A020;"></div>
+      <div class="preview-dot" style="background:#00C9A7;"></div>
+      <div class="preview-url">app.dealtether.com</div>
+    </div>
+    <div class="preview-inner">
+      <div class="p-deal-header">
+        <div>
+          <div style="font-size:11px;color:#9AA5B4;margin-bottom:2px;">Active deal</div>
+          <div class="p-deal-name">Apex Property Services</div>
+        </div>
+        <span class="p-badge">18 days left in DD</span>
+      </div>
+      <div class="p-stats">
+        <div class="ps"><div class="ps-l">Complete</div><div class="ps-v" style="color:#00C9A7;">8/35</div></div>
+        <div class="ps"><div class="ps-l">This week</div><div class="ps-v" style="color:#85B7EB;">6</div></div>
+        <div class="ps"><div class="ps-l">Overdue</div><div class="ps-v" style="color:#E24B4A;">4</div></div>
+        <div class="ps"><div class="ps-l">Flags</div><div class="ps-v" style="color:#E8A020;">3</div></div>
+      </div>
+      <div class="p-tasks">
+        <div class="pt">
+          <div class="pt-dot" style="background:#E24B4A;"></div>
+          <span class="pt-name">3 years tax returns</span>
+          <span class="pt-pill" style="background:rgba(0,201,167,.1);color:#00C9A7;">Buyer</span>
+          <div class="pt-bar"><div class="pt-fill" style="width:0%;background:#E24B4A;"></div></div>
+          <span class="pt-due" style="color:#E24B4A;">Overdue</span>
+        </div>
+        <div class="pt flag-row">
+          <div class="pt-dot" style="background:#E24B4A;"></div>
+          <span class="pt-name">&#9873; Quality of earnings assessment</span>
+          <span class="pt-pill" style="background:rgba(42,74,122,.5);color:#85B7EB;">Deal Team</span>
+          <div class="pt-bar"><div class="pt-fill" style="width:50%;background:#E8A020;"></div></div>
+          <span class="pt-due">Apr 22</span>
+        </div>
+        <div class="pt">
+          <div class="pt-dot" style="background:#E8A020;"></div>
+          <span class="pt-name">Confirm deal terms</span>
+          <span class="pt-pill" style="background:rgba(0,201,167,.1);color:#00C9A7;">Buyer</span>
+          <div class="pt-bar"><div class="pt-fill" style="width:0%;background:#9AA5B4;"></div></div>
+          <span class="pt-due">Apr 16</span>
+        </div>
+        <div class="pt">
+          <div class="pt-dot" style="background:#00C9A7;"></div>
+          <span class="pt-name">LOI signed</span>
+          <span class="pt-pill" style="background:rgba(0,201,167,.1);color:#00C9A7;">Buyer</span>
+          <div class="pt-bar"><div class="pt-fill" style="width:100%;background:#00C9A7;"></div></div>
+          <span class="pt-due" style="color:#00C9A7;">Done</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUATION TOOL TEASER -->
+<div class="section-wrap" id="valuation">
+  <div class="section-label">Free tool</div>
+  <h2 class="section-title">Know if the numbers work before you go under contract</h2>
+  <p class="section-sub">The Tether Napkin Value tool walks you through financials, qualitative factors, and risk — then gives you a recommended offer range and deal structure. Free to use.</p>
+  <div class="tool-teaser">
+    <div class="tool-teaser-title">Napkin valuation tool</div>
+    <div class="tool-teaser-sub">Enter 3 years of financials, score 6 qualitative factors, rate 8 risk variables, and get a market-benchmarked valuation multiple, offer range, and 5-year deal structure model.</div>
+    <div class="tool-steps">
+      <div class="tool-step"><div class="tool-step-num">1</div><div class="tool-step-label">Enter financials</div></div>
+      <div class="tool-step"><div class="tool-step-num">2</div><div class="tool-step-label">Score qualitative factors</div></div>
+      <div class="tool-step"><div class="tool-step-num">3</div><div class="tool-step-label">Rate the risks</div></div>
+      <div class="tool-step"><div class="tool-step-num">4</div><div class="tool-step-label">Get your valuation</div></div>
+      <div class="tool-step"><div class="tool-step-num">5</div><div class="tool-step-label">Structure the deal</div></div>
+    </div>
+    <a href="/valuation" class="tool-cta">Try the valuation tool — free</a>
+    <p class="tool-note">No signup required to start &nbsp;·&nbsp; Results emailed to you</p>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section-wrap" id="features">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Everything a deal needs to close</h2>
+  <p class="section-sub">Tether gives every party in the deal exactly what they need — no more, no less.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="#00C9A7" stroke-width="1.5"/><line x1="6" y1="8" x2="14" y2="8" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="11" x2="11" y2="11" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">Pre-built DD task template</div>
+      <div class="feat-desc">A proven due diligence checklist covering documents, financing, financial DD, legal, operations, marketing, team, and transition — loaded automatically for every deal.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#00C9A7" stroke-width="1.5"/><line x1="10" y1="6" x2="10" y2="10" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="10" x2="13" y2="10" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">Timeline auto-scales</div>
+      <div class="feat-desc">Set your DD period — 30, 45, or 60 days — and every task due date adjusts proportionally. Your deal always stays in sync with your actual closing schedule.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 16l4-4 3 3 4-5 3 3" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="feat-title">Flag issues instantly</div>
+      <div class="feat-desc">Flag any task as a red flag with a required note. Flagged tasks surface in the weekly report and the portfolio dashboard so nothing gets buried or missed.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="2" stroke="#00C9A7" stroke-width="1.5"/><line x1="7" y1="7" x2="13" y2="7" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="10" x2="13" y2="10" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="13" x2="10" y2="13" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">Weekly automated report</div>
+      <div class="feat-desc">Every week all participants receive an email with completed tasks, active flags with notes, and overdue items. Subject: "[Deal Name] Diligence Weekly Report."</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="7" cy="8" r="3" stroke="#00C9A7" stroke-width="1.5"/><circle cx="14" cy="6" r="2" stroke="#00C9A7" stroke-width="1.5"/><path d="M2 17c0-3 2-5 5-5s5 2 5 5" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/><path d="M14 14c2 0 4 1 4 3" stroke="#00C9A7" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">Magic link access</div>
+      <div class="feat-desc">Invite your attorney, broker, advisor, or ops team with one click. They receive a magic link — no account, no password, no friction. Click and they're in.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="#00C9A7" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="#00C9A7" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="#00C9A7" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="#00C9A7" stroke-width="1.5"/></svg>
+      </div>
+      <div class="feat-title">Portfolio dashboard</div>
+      <div class="feat-desc">Advisors and brokers see every active deal in one view — progress, flags, overdue tasks, and days remaining in DD. No more digging to know where a deal stands.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-wrap">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title" style="text-align:center;margin-bottom:.75rem;">From LOI to close in four steps</h2>
+  <p class="section-sub" style="text-align:center;margin-bottom:3rem;">Set up a deal in under five minutes. Your whole team is aligned before the first weekly call.</p>
+  <div class="steps-row">
+    <div class="step-connector"></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Create your deal</div>
+      <div class="step-desc">Enter the deal name, start date, DD period, and closing target. The task template loads automatically.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Invite your team</div>
+      <div class="step-desc">Add your attorney, broker, advisor, and ops team by email. Everyone gets a magic link — no accounts needed.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Work the process</div>
+      <div class="step-desc">Each party sees their tasks, updates progress, adds notes, and flags issues. Everything visible to the full team.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Close with confidence</div>
+      <div class="step-desc">Weekly reports keep everyone accountable. Flags get resolved. Nothing falls through. You close.</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<div class="who-outer" id="who">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div class="section-label" style="text-align:center;">Who it's for</div>
+    <h2 class="section-title">Built for every party in the deal</h2>
+    <p class="section-sub">From the first-time buyer to the high-volume operator — Tether works for everyone in the acquisition ecosystem.</p>
+  </div>
+  <div class="who-grid">
+    <div class="who-card">
+      <div class="who-role">Buyer / searcher / ETA</div>
+      <div class="who-desc">Your first acquisition is the most complex financial decision you've made. Tether makes sure nothing gets missed — with task descriptions that explain every step.</div>
+      <span class="who-tag tag-deal">Per deal · $197</span>
+    </div>
+    <div class="who-card">
+      <div class="who-role">Acquisition advisor / deal coach</div>
+      <div class="who-desc">Run 3–8 deals simultaneously with a portfolio dashboard, automated weekly reports, and instant visibility into every flag across every deal.</div>
+      <span class="who-tag tag-adv">Advisor · $347/mo</span>
+    </div>
+    <div class="who-card">
+      <div class="who-role">Business broker</div>
+      <div class="who-desc">Your commission dies when deals fall apart in DD. Tether keeps buyers moving, organized, and accountable — protecting your close rate and your fee.</div>
+      <span class="who-tag tag-adv">Advisor · $347/mo</span>
+    </div>
+    <div class="who-card">
+      <div class="who-role">Transaction attorney</div>
+      <div class="who-desc">Get assigned your legal DD tasks directly, see the full deal timeline, and add notes visible to the whole team. Less back-and-forth, more clarity.</div>
+      <span class="who-tag tag-deal">Seat add-on</span>
+    </div>
+    <div class="who-card">
+      <div class="who-role">Roll-up operator</div>
+      <div class="who-desc">Running parallel acquisitions is your edge. Custom templates, unlimited deals, and white-label branding give you a system that scales with your strategy.</div>
+      <span class="who-tag tag-ent">Advisor or Enterprise</span>
+    </div>
+    <div class="who-card">
+      <div class="who-role">High-volume organization</div>
+      <div class="who-desc">Acquisition brands, PE-backed platforms, and family offices running acquisition programs at scale. Unlimited deals, unlimited seats, white-label ready.</div>
+      <span class="who-tag tag-ent">Enterprise · $797/mo</span>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="section-wrap">
+  <div class="section-label">Social proof</div>
+  <h2 class="section-title">Deals close when everyone is tethered</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">"I was running my first acquisition completely blind. Tether gave me a roadmap I could actually follow — and my advisor could see exactly where I was at every step."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">MK</div>
+        <div><div class="testi-name">Marcus K.</div><div class="testi-role">First-time buyer · HVAC acquisition</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">"I'm managing six deals right now. The portfolio dashboard alone is worth the subscription — I can see flags across all my deals without opening a single spreadsheet."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">SL</div>
+        <div><div class="testi-name">Sarah L.</div><div class="testi-role">Acquisition advisor · 12 deals closed</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <div class="testi-quote">"As a broker, I've seen deals collapse because buyers got overwhelmed in DD. Since I started recommending Tether, my close rate is noticeably higher."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">RT</div>
+        <div><div class="testi-name">Robert T.</div><div class="testi-role">Business broker · SMB M&amp;A</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="section-wrap" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple pricing, serious value</h2>
+  <p class="section-sub">Pay per deal or subscribe for unlimited. Either way, $197 against a $500K+ acquisition is the easiest decision you'll make.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Per deal</div>
+      <div class="price-amount">$197</div>
+      <div class="price-period">one-time · access through close</div>
+      <div class="price-desc">For buyers and search funders running a single deal.</div>
+      <!-- REPLACE: swap href with your $197 Stripe payment link -->
+      <a href="STRIPE_LINK_PER_DEAL" class="price-btn price-btn-secondary">Get started</a>
+      <div class="price-feats">
+        <div class="pf"><div class="pf-check">✓</div><span>Full DD task template</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>2 seats included</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>+$49 / additional seat</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Weekly automated report</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Flag &amp; issue tracking</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Magic link invites</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Timeline auto-scaling</span></div>
+      </div>
+    </div>
+    <div class="price-card featured">
+      <div class="price-featured-badge">Best for advisors &amp; brokers</div>
+      <div class="price-name">Advisor</div>
+      <div class="price-amount">$347</div>
+      <div class="price-period">per month · 14-day free trial</div>
+      <div class="price-desc">For advisors, brokers, and attorneys managing multiple deals.</div>
+      <!-- REPLACE: swap href with your $347/mo Stripe payment link -->
+      <a href="STRIPE_LINK_ADVISOR" class="price-btn price-btn-primary">Start free trial</a>
+      <div class="price-feats">
+        <div class="pf"><div class="pf-check">✓</div><span><strong style="color:#F5F2EC;">5 concurrent deals</strong></span></div>
+        <div class="pf"><div class="pf-check">✓</div><span><strong style="color:#F5F2EC;">5 seats</strong> per deal</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>+$29 / additional seat</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Portfolio dashboard</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Custom task templates</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Weekly automated reports</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Priority support</span></div>
+      </div>
+      <div class="price-overage">6th+ deal: +$130 / deal / mo</div>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Enterprise</div>
+      <div class="price-amount">$797</div>
+      <div class="price-period">per month · 14-day free trial</div>
+      <div class="price-desc">For high-volume organizations and acquisition brands.</div>
+      <!-- REPLACE: swap href with your $797/mo Stripe payment link -->
+      <a href="STRIPE_LINK_ENTERPRISE" class="price-btn price-btn-secondary">Start free trial</a>
+      <div class="price-feats">
+        <div class="pf"><div class="pf-check">✓</div><span><strong style="color:#F5F2EC;">Unlimited deals</strong></span></div>
+        <div class="pf"><div class="pf-check">✓</div><span><strong style="color:#F5F2EC;">Unlimited seats</strong></span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>White-label branding</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Multi-advisor team access</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Custom task templates</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Dedicated onboarding</span></div>
+        <div class="pf"><div class="pf-check">✓</div><span>Priority support + SLA</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<div class="waitlist-outer" id="waitlist">
+  <div class="waitlist-inner">
+    <div class="waitlist-title">Join the waitlist</div>
+    <div class="waitlist-sub">Tether is launching soon. Join the waitlist for founding member pricing — locked in for early signups. Limited spots.</div>
+    <form class="waitlist-form" id="waitlist-form" action="https://formspree.io/f/xaqabooy" method="POST">
+      <input class="waitlist-input" type="email" name="email" placeholder="Your email address" required/>
+      <button class="waitlist-btn" type="submit">Join waitlist</button>
+    </form>
+    <div class="waitlist-success" id="waitlist-success">You're on the list. We'll be in touch with founding member pricing.</div>
+    <p class="waitlist-note">Founding member pricing for early signups &nbsp;·&nbsp; No spam, ever</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Your next deal deserves a <span>tether</span></h2>
+  <p class="cta-sub">Start your first deal workspace in under five minutes.<br>No account needed for your participants. No contracts. No risk.</p>
+  <div class="cta-actions">
+    <!-- REPLACE: swap href with your $197 Stripe payment link -->
+    <a href="STRIPE_LINK_PER_DEAL" class="btn-primary">Start your first deal — $197</a>
+    <!-- REPLACE: swap href with your $347/mo Stripe payment link -->
+    <a href="STRIPE_LINK_ADVISOR" class="btn-secondary">Try Advisor free for 14 days</a>
+  </div>
+  <p class="cta-note">Questions? Email <a href="mailto:hello@dealtether.com" style="color:var(--teal);text-decoration:none;">hello@dealtether.com</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="/" class="footer-logo">
+    <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
+      <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" stroke-width="2"/>
+      <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
+    </svg>
+    <span class="footer-wordmark">tether</span>
+  </a>
+  <div class="footer-copy">© 2026 Deal Tether · dealtether.com</div>
+  <div class="footer-links">
+    <a href="#" class="footer-link">Privacy</a>
+    <a href="#" class="footer-link">Terms</a>
+    <a href="mailto:hello@dealtether.com" class="footer-link">Contact</a>
+  </div>
+</footer>
+
+<script>
+document.getElementById('waitlist-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var form=this;
+  var data=new FormData(form);
+  fetch(form.action,{method:'POST',body:data,headers:{'Accept':'application/json'}})
+    .then(function(r){
+      if(r.ok){
+        form.style.display='none';
+        document.getElementById('waitlist-success').style.display='block';
+      }
+    })
+    .catch(function(){
+      alert('Something went wrong. Please email hello@dealtether.com directly.');
+    });
+});
+</script>
+</body>
+</html>
