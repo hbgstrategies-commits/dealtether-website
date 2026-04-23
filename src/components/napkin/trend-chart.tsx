@@ -118,7 +118,7 @@ export function TrendChart({
             bodyColor: "#9AA5B4",
             callbacks: {
               label: (c) =>
-                ` ${c.dataset.label}: $${Math.round(c.parsed.y).toLocaleString()}`,
+                ` ${c.dataset.label}: $${Math.round(c.parsed.y ?? 0).toLocaleString()}`,
             },
           },
         },

@@ -18,6 +18,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *   → paste the `whsec_…` into .env.local as STRIPE_WEBHOOK_SECRET
  */
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const relevantEvents = new Set<Stripe.Event.Type>([
   "checkout.session.completed",
