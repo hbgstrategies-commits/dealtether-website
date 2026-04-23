@@ -1,8 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/valuation", "destination": "/valuation.html" },
-    { "source": "/qoe", "destination": "/qoe.html" },
-    { "source": "/dd-demo", "destination": "/dd-demo.html" },
-    { "source": "/dd-pm", "destination": "/dd-pm.html" }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
 }
