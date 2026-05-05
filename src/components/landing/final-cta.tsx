@@ -1,26 +1,36 @@
-import Link from "next/link";
-
 export function FinalCta() {
   return (
-    <section className="px-10 py-24">
-      <div className="mx-auto max-w-3xl text-center">
-        <h2 className="mb-4 text-4xl font-bold tracking-tether-tight text-warm md:text-5xl">
-          Stop guessing. Start{" "}
-          <span className="text-teal">closing.</span>
-        </h2>
-        <p className="mx-auto mb-8 max-w-lg text-muted">
-          Start with the free Napkin Value tool. Upgrade when you&apos;re ready
-          to take the deal seriously.
-        </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Link href="/napkin" className="btn-primary">
-            Try Napkin Value — free
-          </Link>
-          <Link href="/pricing" className="btn-secondary">
-            See pricing
-          </Link>
-        </div>
+    <section className="border-t border-[0.5px] border-border px-10 py-20 text-center" style={{ background: "var(--navy2)" }}>
+      <h2 className="mb-3 text-[40px] font-bold leading-tight text-warm" style={{ letterSpacing: "-1px" }}>
+        Stop guessing. Start <span className="text-teal">closing.</span>
+      </h2>
+      <p className="mx-auto mb-8 max-w-lg text-[16px] leading-relaxed text-muted">
+        Your first month is free. No credit card required to start.
+        <br />
+        One bad acquisition decision costs more than a year of Tether.
+      </p>
+      <div className="flex flex-wrap justify-center gap-3">
+        <a
+          href="/valuation"
+          className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
+          style={{ letterSpacing: "-0.1px" }}
+        >
+          Analyze a deal — free
+        </a>
+        <a
+          href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
+          className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
+          style={{ letterSpacing: "-0.1px" }}
+        >
+          Start free — 1 month free
+        </a>
       </div>
+      <p className="mt-4 text-[12px] text-muted">
+        Questions? Email{" "}
+        <a href="mailto:hbgstrategies@gmail.com" className="text-teal no-underline hover:underline">
+          hbgstrategies@gmail.com
+        </a>
+      </p>
     </section>
   );
 }

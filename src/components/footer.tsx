@@ -1,33 +1,26 @@
-import Link from "next/link";
+function TetherLogo() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
+      <line x1="14" y1="1" x2="14" y2="7" stroke="#00C9A7" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 2"/>
+      <line x1="14" y1="21" x2="14" y2="27" stroke="#00C9A7" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 2"/>
+      <circle cx="14" cy="14" r="8" fill="none" stroke="#00C9A7" strokeWidth="2"/>
+      <circle cx="14" cy="14" r="3" fill="#00C9A7"/>
+    </svg>
+  );
+}
 
 export function Footer() {
   return (
-    <footer className="border-t border-[0.5px] border-border bg-navy px-10 py-10 text-sm text-muted">
-      <div className="mx-auto flex max-w-5xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-[18px] font-bold text-warm">Tether</span>
-          <span className="text-xs">— Buy a business without guessing.</span>
-        </div>
-        <div className="flex flex-wrap gap-6">
-          <Link href="/napkin" className="hover:text-warm">
-            Napkin Value
-          </Link>
-          <Link href="/qoe" className="hover:text-warm">
-            QoE Mapper
-          </Link>
-          <Link href="/dd-demo" className="hover:text-warm">
-            Deal Workspace
-          </Link>
-          <Link href="/pricing" className="hover:text-warm">
-            Pricing
-          </Link>
-          <Link href="/login" className="hover:text-warm">
-            Log in
-          </Link>
-        </div>
-      </div>
-      <div className="mx-auto mt-8 max-w-5xl text-xs text-muted/70">
-        © {new Date().getFullYear()} Tether. All rights reserved.
+    <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[0.5px] border-border px-10 py-8 bg-navy">
+      <a href="/" className="flex items-center gap-2 no-underline">
+        <TetherLogo />
+        <span className="text-[15px] font-bold text-warm">tether</span>
+      </a>
+      <div className="text-[12px] text-muted">© 2026 Deal Tether · dealtether.com</div>
+      <div className="flex gap-6">
+        <a href="#" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Privacy</a>
+        <a href="#" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Terms</a>
+        <a href="mailto:hbgstrategies@gmail.com" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Contact</a>
       </div>
     </footer>
   );
