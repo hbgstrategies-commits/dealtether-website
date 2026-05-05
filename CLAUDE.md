@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Hunter is the owner of this project and is not a programmer. Follow these rules in every session:
 
 - **Use plain language.** Avoid technical jargon. Say "push this live" not "create a PR", "save a checkpoint" not "commit", "undo the last change" not "revert the commit", etc.
-- **Standard feature workflow:** make the code changes → write tests → verify tests pass → start the local dev server. Don't narrate the technical steps — just do them and tell Hunter what URL to open and what to click to test the feature.
+- **Standard feature workflow:** make the code changes → write tests → verify tests pass → run `npm run build` and confirm it succeeds → start the local dev server. Don't narrate the technical steps — just do them and tell Hunter what URL to open and what to click to test the feature. Never commit or push unless the build passes cleanly.
 - **Be aggressive with changes.** Git makes it trivial to undo anything, so move fast and don't hedge. If something needs to be undone, Hunter will ask.
 
 ## Commands
@@ -19,7 +19,10 @@ npm run typecheck  # tsc --noEmit only
 npm run lint       # ESLint
 ```
 
-No test suite exists yet.
+Run all tests (Playwright):
+```bash
+npm test
+```
 
 For local Stripe webhook testing:
 ```bash

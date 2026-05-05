@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function TetherLogo() {
   return (
     <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
@@ -12,10 +14,10 @@ function TetherLogo() {
 export function Footer() {
   return (
     <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[0.5px] border-border px-10 py-8 bg-navy">
-      <a href="/" className="flex items-center gap-2 no-underline">
+      <Link href="/" className="flex items-center gap-2 no-underline">
         <TetherLogo />
         <span className="text-[15px] font-bold text-warm">tether</span>
-      </a>
+      </Link>
       <div className="text-[12px] text-muted">© 2026 Deal Tether · dealtether.com</div>
       <div className="flex gap-6">
         <a href="#" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Privacy</a>
