@@ -375,7 +375,7 @@ function DDMockup() {
 }
 
 function DDTaskRow({
-  name, role, due: _due, dueClass: _dueClass = "text-muted", fillPct, fillColor, flagged, done,
+  name, role, fillPct, fillColor, flagged, done,
 }: {
   name: string; role: string; due: string; dueClass?: string;
   fillPct: number; fillColor: string; flagged?: boolean; done?: boolean;
