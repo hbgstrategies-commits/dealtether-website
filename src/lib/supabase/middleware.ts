@@ -35,7 +35,12 @@ export async function updateSession(request: NextRequest) {
 
   // Touching getUser() forces Supabase to refresh the session cookie.
   // This is the single most important line for SSR auth — don't remove.
-  await supabase.auth.getUser();
+  // Wrapped in try/catch so a missing/invalid env var doesn't 500 every page.
+  try {
+    await supabase.auth.getUser();
+  } catch {
+    // Session refresh failed — app continues unauthenticated.
+  }
 
   return response;
 }
