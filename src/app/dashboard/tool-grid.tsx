@@ -55,16 +55,6 @@ const TOOLS = [
     colorBg: "rgba(175,169,236,0.08)",
     colorBd: "rgba(175,169,236,0.2)",
   },
-  {
-    stage: "05",
-    label: "PM Deal Workspace",
-    desc: "The full property management acquisition playbook — every phase from diligence through 90-day transition.",
-    href: "/dd-pm",
-    cta: "Open PM workspace →",
-    color: "#AFA9EC",
-    colorBg: "rgba(175,169,236,0.08)",
-    colorBd: "rgba(175,169,236,0.2)",
-  },
 ];
 
 function ToolCard({ tool }: { tool: typeof TOOLS[number] }) {
