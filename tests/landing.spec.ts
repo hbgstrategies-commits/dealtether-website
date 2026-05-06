@@ -55,17 +55,23 @@ test.describe("Landing page", () => {
     // Deal Analyzer tab is active by default
     await expect(page.locator("#examples").getByText(/recommended offer range/i)).toBeVisible();
 
-    // Switch to Financial Normalizer tab
-    await page.getByRole("button", { name: /financial normalizer/i }).first().click();
-    await expect(page.getByText(/add-backs identified/i)).toBeVisible();
+    // Switch to Financial Normalizer tab (scroll past sticky nav first)
+    const finNormBtn = page.locator("#examples").getByRole("button", { name: /financial normalizer/i });
+    await finNormBtn.scrollIntoViewIfNeeded();
+    await finNormBtn.click({ force: true });
+    await expect(page.locator("#examples").getByText(/add-backs identified/i)).toBeVisible();
 
     // Switch to Pipeline tab
-    await page.getByRole("button", { name: /pipeline dashboard/i }).first().click();
-    await expect(page.getByText(/active deals/i).first()).toBeVisible();
+    const pipeBtn = page.locator("#examples").getByRole("button", { name: /pipeline dashboard/i });
+    await pipeBtn.scrollIntoViewIfNeeded();
+    await pipeBtn.click({ force: true });
+    await expect(page.locator("#examples").getByText(/active deals/i).first()).toBeVisible();
 
     // Switch to DD tab
-    await page.getByRole("button", { name: /dd workspace/i }).first().click();
-    await expect(page.getByText(/weekly report sends/i).first()).toBeVisible();
+    const ddBtn = page.locator("#examples").getByRole("button", { name: /dd workspace/i });
+    await ddBtn.scrollIntoViewIfNeeded();
+    await ddBtn.click({ force: true });
+    await expect(page.locator("#examples").getByText(/weekly report sends/i).first()).toBeVisible();
   });
 
   test("founder credibility section renders", async ({ page }) => {

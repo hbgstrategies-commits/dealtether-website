@@ -25,6 +25,21 @@ export function fmtP(n: number, signed = false): string {
   return (signed && n > 0 ? "+" : n < 0 ? "–" : "") + s;
 }
 
+// --- Color helpers (for inline styles) --------------------------------------
+export function gC(v: number): string {
+  return v > 0.05
+    ? "var(--teal)"
+    : v > 0
+      ? "#5BA3E8"
+      : v === 0
+        ? "var(--muted)"
+        : "var(--danger)";
+}
+
+export function dscrColor(v: number): string {
+  return v >= 1.5 ? "var(--teal)" : v >= 1.25 ? "var(--amber)" : "var(--danger)";
+}
+
 // --- Benchmark multiples by SDE band ----------------------------------------
 /** Returns the baseline market multiple given an SDE amount. */
 export function benchM(sde: number): number {
@@ -38,7 +53,7 @@ export function benchM(sde: number): number {
 
 // --- Mortgage payment helper ------------------------------------------------
 /** Monthly P&I payment on a standard amortizing loan. */
-export function pmtFn(principal: number, annualRate: number, months: number) {
+export function pmtFn(principal: number, annualRate: number, months: number): number {
   if (!principal || principal <= 0) return 0;
   if (annualRate < 0.0001) return principal / months;
   const mr = annualRate / 12;
@@ -48,6 +63,75 @@ export function pmtFn(principal: number, annualRate: number, months: number) {
 export function cagrFn(start: number, end: number, years: number): number {
   if (!start || !end || years <= 0) return 0;
   return Math.pow(end / start, 1 / years) - 1;
+}
+
+export function yoyFn(arr: number[]): number[] {
+  const r: number[] = [];
+  for (let i = 1; i < arr.length; i++) {
+    r.push((arr[i] - arr[i - 1]) / Math.abs(arr[i - 1]));
+  }
+  return r;
+}
+
+// --- WACC -------------------------------------------------------------------
+export function calcWACC(
+  eq: number,
+  sba: number,
+  sbaR: number,
+  sn: number,
+  snR: number,
+  tot: number
+): number {
+  if (tot <= 0) return 0;
+  return (eq / tot) * 0.2 + (sba / tot) * (sbaR / 100) + (sn / tot) * (snR / 100);
+}
+
+// --- IRR (Newton-Raphson equity IRR) ----------------------------------------
+export function calcIRR(opts: {
+  sde: number;
+  exitMult: number;
+  years: number;
+  eq: number;
+  sbaAmount: number;
+  sbaRate: number;
+  sbaTerm: number;
+  snAmount: number;
+  snRate: number;
+  snTerm: number;
+}): number {
+  const { sde, exitMult, years, eq, sbaAmount, sbaRate, sbaTerm, snAmount, snRate, snTerm } = opts;
+  if (eq <= 0) return 0;
+  const sbaDS = pmtFn(sbaAmount, sbaRate / 100, sbaTerm * 12) * 12;
+  const snDS = pmtFn(snAmount, snRate / 100, snTerm * 12) * 12;
+  const totDS = sbaDS + snDS;
+  const cfs: number[] = [-eq];
+  let sbaB = sbaAmount;
+  let snB = snAmount;
+  for (let y = 1; y <= years; y++) {
+    const ySDE = sde * Math.pow(1.04, y);
+    const sbaI = sbaB * (sbaRate / 100);
+    const sbaP = Math.min(sbaB, sbaDS - sbaI);
+    sbaB = Math.max(0, sbaB - sbaP);
+    const snI = snB * (snRate / 100);
+    const snP = Math.min(snB, snDS - snI);
+    snB = Math.max(0, snB - snP);
+    let cf = ySDE - totDS;
+    if (y === years) cf += ySDE * exitMult - sbaB - snB;
+    cfs.push(cf);
+  }
+  function npv(r: number) {
+    return cfs.reduce((s, cf, i) => s + cf / Math.pow(1 + r, i), 0);
+  }
+  let rate = 0.15;
+  for (let iter = 0; iter < 100; iter++) {
+    const n = npv(rate);
+    const dn = cfs.reduce((s, cf, i) => s - (i * cf) / Math.pow(1 + rate, i + 1), 0);
+    if (Math.abs(dn) < 1e-10) break;
+    const nr = rate - n / dn;
+    if (Math.abs(nr - rate) < 0.0001) break;
+    rate = nr;
+  }
+  return rate > -0.5 && rate < 5 ? rate : 0;
 }
 
 // --- Scoring factor definitions ---------------------------------------------
@@ -211,12 +295,10 @@ export function weightedAverage(opts: {
 export function offerRange(opts: { avgSDE: number; mult: number; askPrice: number }) {
   const { avgSDE, mult, askPrice } = opts;
   const fmv = avgSDE * mult;
-  // Payment-per-dollar factor for a 9.5% SBA, 10-year amortization,
-  // 90% financed. Used to estimate an all-cash DSCR-ceiling price.
   const r = 0.095;
   const mr = r / 12;
   const m = 120;
-  const ppd = (mr * Math.pow(1 + mr, m)) / (Math.pow(1 + mr, m) - 1) * 0.9 * 12;
+  const ppd = ((mr * Math.pow(1 + mr, m)) / (Math.pow(1 + mr, m) - 1)) * 0.9 * 12;
   const cashOffer = Math.min(avgSDE / ppd, fmv);
   const creativeOffer = Math.max(
     fmv * 1.1,
@@ -233,7 +315,7 @@ export type AnalysisInput = {
   askPrice: number;
   cfGoal: number;
   scores: Record<string, number>; // 1..5, keyed by SCORE_FACTORS.key
-  risks: Record<string, number>;  // 0..5, keyed by RISK_FACTORS.key
+  risks: Record<string, number>; // 0..5, keyed by RISK_FACTORS.key
 };
 
 export type Analysis = {
@@ -275,11 +357,10 @@ export function runAnalysis(input: AnalysisInput): Analysis {
   );
   const recMult = Math.max(1.0, bench + qualitativeMod - riskPenalty);
 
-  // Max SBA price (1.25x DSCR floor at 9.5%, 10yr)
   const r = 0.095;
   const mr = r / 12;
   const m = 120;
-  const ppd = (mr * Math.pow(1 + mr, m)) / (Math.pow(1 + mr, m) - 1) * 0.9 * 12;
+  const ppd = ((mr * Math.pow(1 + mr, m)) / (Math.pow(1 + mr, m) - 1)) * 0.9 * 12;
   const maxSBAPrice = avgSDE / ppd;
 
   const { fmv, cashOffer, creativeOffer } = offerRange({
@@ -288,9 +369,7 @@ export function runAnalysis(input: AnalysisInput): Analysis {
     askPrice: input.askPrice,
   });
 
-  const flaggedRisks = RISK_FACTORS.filter(
-    (f) => (input.risks[f.key] ?? 0) >= 2
-  )
+  const flaggedRisks = RISK_FACTORS.filter((f) => (input.risks[f.key] ?? 0) >= 2)
     .map((f) => ({
       ...f,
       score: input.risks[f.key] ?? 0,
@@ -298,7 +377,6 @@ export function runAnalysis(input: AnalysisInput): Analysis {
     }))
     .sort((a, b) => b.score - a.score);
 
-  // Historical series: skip any years where both rev and sde are 0.
   const histLabels: string[] = [];
   const histRevenues: number[] = [];
   const histSdes: number[] = [];
@@ -335,4 +413,143 @@ export function runAnalysis(input: AnalysisInput): Analysis {
     histRevenues,
     histSdes,
   };
+}
+
+// --- Deal structure recommendations -----------------------------------------
+export type StructureTactic = {
+  name: string;
+  badge: string;
+  cls: "" | "am" | "bl";
+  desc: string;
+  eg: string;
+  why: string;
+};
+export type StructureGroup = { label: string; tactics: StructureTactic[] };
+
+export function buildSG(opts: {
+  fv: number;
+  co: number;
+  cr: number;
+  avgSDE: number;
+  flaggedRisks: Array<{ key: string; score: number }>;
+  oppScore: number;
+  teamScore: number;
+  histScore: number;
+  marginScore: number;
+  askPrice: number;
+}): StructureGroup[] {
+  const { fv, co, avgSDE, flaggedRisks, oppScore, teamScore, histScore, marginScore, askPrice } =
+    opts;
+  const groups: StructureGroup[] = [];
+  const gap = askPrice > 0 ? Math.max(0, askPrice - fv) : 0;
+  const flag = (key: string) => flaggedRisks.find((f) => f.key === key && f.score >= 2);
+
+  const pt: StructureTactic[] = [
+    {
+      name: "All-SBA cash offer",
+      badge: "Recommended floor",
+      cls: "",
+      desc: "The highest price where SBA debt service alone is fully covered by SDE. Self-funding from day one.",
+      eg: `Offer ${fmtM(co)} — 90% SBA, 10% down of ${fmtM(co * 0.1)}`,
+      why: "Your anchor offer. The business pays for itself at this price with standard financing.",
+    },
+  ];
+  if (gap > 0)
+    pt.push({
+      name: "Seller note to bridge the gap",
+      badge: "Gap bridge",
+      cls: "",
+      desc: `A ${fmtM(gap)} gap exists. A seller note at a lower rate reduces blended cost and improves cash flow.`,
+      eg: `${fmtM(fv * 0.75)} SBA + ${fmtM(fv * 0.2)} seller note @ 6%`,
+      why: "Seller note rates are below SBA rates — blended cost drops, improving DSCR.",
+    });
+  pt.push({
+    name: "Cash plus transition salary",
+    badge: "Lower net cost",
+    cls: "",
+    desc: "Negotiate a transition salary as part of the deal — lowers real acquisition cost.",
+    eg: `${fmtM(fv * 0.9)} + $125k/yr salary over 2 years`,
+    why: "Effective when the seller values income continuity over a lump sum.",
+  });
+  groups.push({ label: "Pricing structures", tactics: pt });
+
+  const rt: StructureTactic[] = [];
+  if (flag("keyman") || flag("custConc"))
+    rt.push({
+      name: "Earnout",
+      badge: "Performance-linked",
+      cls: "am",
+      desc: "Tie a portion to post-close performance.",
+      eg: `${fmtM(fv * 0.82)} at close + ${fmtM(fv * 0.18)} on Year 1 revenue target`,
+      why: "Key-man or concentration risk — earnout shares that risk.",
+    });
+  if (flag("custConc"))
+    rt.push({
+      name: "Clawback",
+      badge: "Customer guard",
+      cls: "am",
+      desc: "Hold a portion in escrow, released only if top customers remain.",
+      eg: `${fmtM(fv * 0.09)} held 12 months`,
+      why: "Concentration above 25% — clawback makes seller share the exposure.",
+    });
+  if (flag("decline"))
+    rt.push({
+      name: "Forgivable note",
+      badge: "Decline protection",
+      cls: "am",
+      desc: "Seller note that disappears if revenue falls by a defined threshold.",
+      eg: `${fmtM(fv * 0.1)} forgivable if revenue drops 20%+`,
+      why: "Revenue declining — converts seller note into downside insurance.",
+    });
+  if (flag("legal"))
+    rt.push({
+      name: "Escrow holdback",
+      badge: "Legal buffer",
+      cls: "am",
+      desc: "Hold in escrow for 12–24 months to cover undisclosed liabilities.",
+      eg: `${fmtM(fv * 0.1)} in escrow 18 months`,
+      why: "Legal exposure present — protects from inheriting undisclosed obligations.",
+    });
+  if (rt.length) groups.push({ label: "Risk protection structures", tactics: rt });
+
+  const gt: StructureTactic[] = [];
+  if (oppScore >= 3.5)
+    gt.push({
+      name: "Revenue share",
+      badge: "Upside capture",
+      cls: "bl",
+      desc: "Pay less upfront, share revenue growth above a baseline.",
+      eg: `${fmtM(fv * 0.8)} upfront + 8% of revenue above ${fmtM(avgSDE / 0.33)} for 3 years`,
+      why: "Strong upside opportunity — pay conservatively and reward seller if growth plays out.",
+    });
+  if (teamScore >= 3.5 && oppScore >= 3)
+    gt.push({
+      name: "Partial buyout",
+      badge: "Staged acquisition",
+      cls: "bl",
+      desc: "Acquire a controlling stake now, buy the rest after validating the opportunity.",
+      eg: `75% now at ${fmtM(fv * 0.75)}, option for 25% at ${fmtM(fv * 0.28)} after 24 months`,
+      why: "Strong team and upside — staging reduces transition risk.",
+    });
+  if (marginScore >= 3.5 || oppScore >= 4)
+    gt.push({
+      name: "Profit share",
+      badge: "Margin expansion",
+      cls: "bl",
+      desc: "Pay less upfront with seller receiving a profit share above a defined floor.",
+      eg: `${fmtM(fv * 0.78)} upfront + 25% of SDE above ${fmtM(avgSDE * 0.28)} for 4 years`,
+      why: "Margin expansion opportunity — profit share aligns seller with improvements.",
+    });
+  if (histScore >= 4 && oppScore >= 3)
+    gt.push({
+      name: "Series of buyouts",
+      badge: "Low-risk entry",
+      cls: "bl",
+      desc: "Buy a portion now, lock in the right to acquire the rest at a pre-agreed price.",
+      eg: `70% at ${fmtM(fv * 0.7)}, 30% in 24 months at ${fmtM(fv * 0.33)}`,
+      why: "Proven track record with growth — tranched entry validates before full commitment.",
+    });
+  if (gt.length) groups.push({ label: "Growth & opportunity structures", tactics: gt });
+
+  return groups;
 }
