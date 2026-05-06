@@ -27,7 +27,7 @@ export function Paywall({ toolName, nextPath, isAuthenticated }: Props) {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ next: nextPath }),
+        body: JSON.stringify({ next: "/dashboard" }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) {

@@ -36,7 +36,7 @@ export function CheckoutButton({
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ priceId, next: "/pipeline" }),
+        body: JSON.stringify({ priceId, next: "/dashboard" }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "checkout_failed");
