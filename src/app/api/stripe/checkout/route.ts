@@ -68,6 +68,7 @@ export async function POST(request: Request) {
     allow_promotion_codes: true,
     client_reference_id: user.id,
     subscription_data: {
+      trial_period_days: 30,
       metadata: { supabase_user_id: user.id },
     },
   });
