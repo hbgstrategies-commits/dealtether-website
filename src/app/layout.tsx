@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DM_Mono, Syne } from "next/font/google";
+
+const dmMono = DM_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono" });
+const syne = Syne({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -27,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${dmMono.variable} ${syne.variable}`}>
       <body>{children}</body>
     </html>
   );
