@@ -85,7 +85,7 @@ export function PricingPreview() {
               For buyers working their first or second acquisition. Full system from sourcing to close.
             </div>
             <a
-              href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
+              href="/pricing"
               className="mb-5 block w-full rounded-lg border border-[0.5px] border-border py-2.5 text-center text-[13px] font-semibold text-warm transition-colors hover:bg-navy-200"
             >
               Start free — 1 month free
@@ -109,13 +109,13 @@ export function PricingPreview() {
               Most popular
             </div>
             <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">Advisor</div>
-            <div className="text-[32px] font-bold text-warm" style={{ letterSpacing: "-1px" }}>$397</div>
+            <div className="text-[32px] font-bold text-warm" style={{ letterSpacing: "-1px" }}>$347</div>
             <div className="text-[12px] text-muted">per month · first month free · cancel anytime</div>
             <div className="my-3 text-[12px] leading-relaxed text-muted">
               For advisors and brokers managing multiple client acquisitions simultaneously.
             </div>
             <a
-              href="https://buy.stripe.com/4gMeVe6Yn21zcLrcbbcIE03"
+              href="/pricing"
               className="mb-5 block w-full rounded-lg bg-teal py-2.5 text-center text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
             >
               Start free — 1 month free

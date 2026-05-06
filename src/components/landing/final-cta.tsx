@@ -11,7 +11,7 @@ export function FinalCta() {
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         <a
-          href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
+          href="/pricing"
           className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
           style={{ letterSpacing: "-0.1px" }}
         >

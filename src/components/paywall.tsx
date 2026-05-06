@@ -49,8 +49,8 @@ export function Paywall({ toolName, nextPath, isAuthenticated }: Props) {
         {toolName} is a Tether Pro tool
       </h1>
       <p className="max-w-lg text-muted">
-        Unlock the full deal-diligence suite — QoE Mapper, Deal Workspace,
-        and the Property Management playbook — with a single subscription.
+        Unlock the full acquisition system — sourcing, QoE, deal analysis,
+        pipeline, and due diligence workspace — with one subscription.
       </p>
 
       {isAuthenticated ? (
@@ -60,7 +60,7 @@ export function Paywall({ toolName, nextPath, isAuthenticated }: Props) {
           disabled={loading}
           className="btn-primary disabled:opacity-60"
         >
-          {loading ? "Opening checkout…" : "Unlock for $—"}
+          {loading ? "Opening checkout…" : "Start free — $147/mo after"}
         </button>
       ) : (
         <a
@@ -73,7 +73,7 @@ export function Paywall({ toolName, nextPath, isAuthenticated }: Props) {
       {error && <p className="text-sm text-danger">{error}</p>}
 
       <p className="text-xs text-muted">
-        Napkin Value is free. Cancel anytime from your account.
+        First month free · $147/mo after · Cancel anytime
       </p>
     </div>
   );

@@ -41,7 +41,7 @@ export function Nav() {
       </div>
 
       <a
-        href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
+        href="/pricing"
         className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
       >
         Start free — 1 month free
