@@ -53,7 +53,7 @@ export function FounderCredibility() {
         <p className="mt-7 text-center text-[12px] text-muted">
           Tether is newly launched. We don&apos;t have customer reviews yet — and we won&apos;t fake them.
           <br />
-          Try the Deal Analyzer free and see for yourself.
+          Start your free month and see for yourself.
         </p>
       </div>
     </section>

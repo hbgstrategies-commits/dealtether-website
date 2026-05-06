@@ -20,13 +20,13 @@ export function Hero() {
         Tether is the acquisition system that prevents all three.
       </p>
       <div className="mb-5 flex flex-wrap justify-center gap-3">
-        <Link
-          href="/valuation"
+        <a
+          href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
           className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
           style={{ letterSpacing: "-0.1px" }}
         >
-          Analyze a deal — free
-        </Link>
+          Start free — 1 month free
+        </a>
         <Link
           href="#how-it-works"
           className="inline-block rounded-[9px] border border-[0.5px] border-border px-[28px] py-[13px] text-[15px] font-medium text-warm transition-colors hover:bg-navy-100"
@@ -35,7 +35,7 @@ export function Hero() {
         </Link>
       </div>
       <p className="text-xs text-muted">
-        First month free &nbsp;·&nbsp; $147/mo after &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; No account needed for your team
+        First month free &nbsp;·&nbsp; $147/mo after &nbsp;·&nbsp; Cancel anytime
       </p>
     </section>
   );

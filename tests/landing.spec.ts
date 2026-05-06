@@ -10,15 +10,15 @@ test.describe("Landing page", () => {
     await expect(nav).toBeVisible();
     await expect(nav.getByRole("link", { name: /how it works/i })).toBeVisible();
     await expect(nav.getByRole("link", { name: /pricing/i })).toBeVisible();
-    await expect(nav.getByRole("link", { name: /valuation tool/i })).toBeVisible();
+    await expect(nav.getByRole("link", { name: /deal analyzer/i })).toBeVisible();
     await expect(nav.getByRole("link", { name: /start free/i })).toBeVisible();
   });
 
   test("hero section renders headline and buttons", async ({ page }) => {
     await expect(page.getByRole("heading", { name: /buy a business/i })).toBeVisible();
     await expect(page.getByText(/without guessing/i).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /analyze a deal/i }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /see how it works/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /start free/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /see how it works/i }).first()).toBeVisible();
     await expect(page.getByText(/\$147\/mo/i).first()).toBeVisible();
   });
 

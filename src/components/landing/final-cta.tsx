@@ -11,18 +11,17 @@ export function FinalCta() {
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         <a
-          href="/valuation"
-          className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
-          style={{ letterSpacing: "-0.1px" }}
-        >
-          Analyze a deal — free
-        </a>
-        <a
           href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
           className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
           style={{ letterSpacing: "-0.1px" }}
         >
           Start free — 1 month free
+        </a>
+        <a
+          href="#how-it-works"
+          className="inline-block rounded-[9px] border border-[0.5px] border-border px-[28px] py-[13px] text-[15px] font-medium text-warm transition-colors hover:bg-navy-100"
+        >
+          See how it works
         </a>
       </div>
       <p className="mt-4 text-[12px] text-muted">

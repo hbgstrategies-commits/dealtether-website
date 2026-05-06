@@ -7,7 +7,7 @@ const WHO = [
   },
   {
     role: "ETA / search fund",
-    desc: "You're screening multiple targets simultaneously. The free valuation tool lets you quickly assess whether a deal is worth pursuing before you spend money on advisors.",
+    desc: "You're screening multiple targets simultaneously. The Deal Analyzer lets you quickly assess whether a deal is worth pursuing before you spend money on advisors.",
     tag: "Solo · $147/mo",
     tagClass: "bg-teal-bg text-teal",
   },

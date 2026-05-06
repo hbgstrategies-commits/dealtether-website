@@ -35,8 +35,8 @@ export function Nav() {
         <Link href="#pricing" className="text-[13px] text-muted transition-colors hover:text-warm">
           Pricing
         </Link>
-        <Link href="/valuation" className="text-[13px] text-muted transition-colors hover:text-warm">
-          Valuation tool
+        <Link href="/napkin" className="text-[13px] text-muted transition-colors hover:text-warm">
+          Deal Analyzer
         </Link>
       </div>
 
