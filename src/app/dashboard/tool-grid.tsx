@@ -103,7 +103,7 @@ function ToolCard({ tool }: { tool: typeof TOOLS[number] }) {
 
 export function ToolGrid() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))", gap: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(290px, 100%), 1fr))", gap: 12 }}>
       {TOOLS.map((tool) => (
         <ToolCard key={tool.href} tool={tool} />
       ))}

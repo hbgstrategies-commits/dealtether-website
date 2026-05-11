@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ── Colors ────────────────────────────────────────────────────────────────────
 const NAVY = "#0A1628";
@@ -49,7 +49,7 @@ const FILTERS = [
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Deal = {
-  id: number;
+  id: string;
   name: string;
   industry: string;
   location: string;
@@ -63,14 +63,37 @@ type Deal = {
   down: number;
   notes: string;
   selected: boolean;
+  // Pre-computed values from Deal Analyzer (used when sba/down not filled)
+  dscrVal?: number | null;
+  irrVal?: number | null;
 };
 
-const SEED_DEALS: Deal[] = [
-  { id: 1, name: "Apex Property Services", industry: "Property Management", location: "Phoenix, AZ", ask: 850000, sde: 224000, rev: 1180000, offer: "$720K – $880K", stage: "offer", date: "2026-03-17", sba: 680000, down: 85000, notes: "Owner retiring after 14 years. Strong review growth. Solid recurring contracts.", selected: false },
-  { id: 2, name: "SunState HVAC", industry: "HVAC", location: "Scottsdale, AZ", ask: 620000, sde: 168000, rev: 890000, offer: "$510K – $630K", stage: "valuation", date: "2026-04-02", sba: 500000, down: 62000, notes: "Single technician dependency risk. Equipment in good shape. Owner willing to stay 90 days.", selected: false },
-  { id: 3, name: "Verde Landscaping Co.", industry: "Landscaping", location: "Tempe, AZ", ask: 410000, sde: 132000, rev: 720000, offer: "", stage: "qoe", date: "", sba: 0, down: 0, notes: "Financials just received. Running QoE now. Seasonal revenue pattern noted.", selected: false },
-  { id: 4, name: "Desert Pest Solutions", industry: "Pest Control", location: "Mesa, AZ", ask: 290000, sde: 95000, rev: 480000, offer: "$235K – $290K", stage: "discovery", date: "", sba: 230000, down: 30000, notes: "Second meeting scheduled. Owner hinted at retirement timeline. Small team.", selected: false },
-];
+// Map a raw API deal row to the pipeline Deal shape
+function apiToDeal(row: Record<string, unknown>): Deal {
+  const offerLow = row.offer_low as number | null;
+  const offerHigh = row.offer_high as number | null;
+  let offerStr = "";
+  if (offerLow && offerHigh) offerStr = `${fmt(offerLow)} – ${fmt(offerHigh)}`;
+  else if (offerHigh) offerStr = fmt(offerHigh);
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    industry: (row.industry as string) ?? "",
+    location: (row.location as string) ?? "",
+    ask: (row.asking_price as number) ?? 0,
+    sde: (row.sde as number) ?? 0,
+    rev: (row.revenue as number) ?? 0,
+    offer: offerStr,
+    stage: ((row.stage as string) ?? "valuation").toLowerCase(),
+    date: row.created_at ? (row.created_at as string).slice(0, 10) : "",
+    sba: (row.sba as number) ?? 0,
+    down: (row.down_payment as number) ?? 0,
+    notes: (row.notes as string) ?? "",
+    selected: false,
+    dscrVal: row.dscr as number | null,
+    irrVal: row.irr as number | null,
+  };
+}
 
 // ── Financial calculations ─────────────────────────────────────────────────────
 function fmt(n: number): string {
@@ -136,18 +159,24 @@ function MetricBox({ label, value, note, color }: { label: string; value: string
 }
 
 // ── DealCard ──────────────────────────────────────────────────────────────────
-function DealCard({ deal, onToggle, onEdit, onMoveToDiligence, dimmed }: {
+function DealCard({ deal, onToggle, onEdit, onMoveToDiligence, onDelete, dimmed }: {
   deal: Deal;
-  onToggle: (id: number) => void;
-  onEdit: (id: number) => void;
-  onMoveToDiligence: (id: number) => void;
+  onToggle: (id: string) => void;
+  onEdit: (id: string) => void;
+  onMoveToDiligence: (id: string) => void;
+  onDelete: (id: string) => void;
   dimmed: boolean;
 }) {
   const sm = STAGE_META[deal.stage] ?? STAGE_META.sourcing;
   const mult = calcMultiple(deal.ask, deal.sde);
-  const dscr = calcDSCR(deal.sde, deal.sba);
-  const irr = calcIRR(deal.ask, deal.sde, deal.down);
+  // Use pre-computed values from Deal Analyzer if SBA/down aren't filled
+  const dscrComputed = calcDSCR(deal.sde, deal.sba);
+  const irrComputed = calcIRR(deal.ask, deal.sde, deal.down);
+  const dscr = dscrComputed ?? (deal.dscrVal != null ? deal.dscrVal.toFixed(2) : null);
+  const irr = irrComputed ?? (deal.irrVal != null ? deal.irrVal.toFixed(1) : null);
   const dscrPct = dscr ? Math.min(parseFloat(dscr) / 3 * 100, 100) : 0;
+  // A deal is "analyzed" if it has pre-computed values from the Deal Analyzer
+  const isAnalyzed = deal.dscrVal != null || deal.irrVal != null;
 
   return (
     <div
@@ -174,11 +203,37 @@ function DealCard({ deal, onToggle, onEdit, onMoveToDiligence, dimmed }: {
           </div>
         </div>
 
-        {/* Stage badge */}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, padding: "3px 9px", borderRadius: 20, fontWeight: 500, border: `.5px solid ${sm.color}33`, background: sm.color + "18", color: sm.color, marginBottom: ".75rem" }}>
-          <div style={{ width: 5, height: 5, borderRadius: "50%", background: sm.color, flexShrink: 0 }} />
-          {sm.label}
+        {/* Stage badge + analysis status */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: ".75rem", flexWrap: "wrap" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, padding: "3px 9px", borderRadius: 20, fontWeight: 500, border: `.5px solid ${sm.color}33`, background: sm.color + "18", color: sm.color }}>
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: sm.color, flexShrink: 0 }} />
+            {sm.label}
+          </div>
+          {isAnalyzed ? (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 9px", borderRadius: 20, fontWeight: 500, border: "0.5px solid rgba(0,201,167,0.3)", background: "rgba(0,201,167,0.08)", color: TEAL }}>
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="4" stroke="#00C9A7" strokeWidth="1"/><path d="M2.5 4.5l1.5 1.5 2.5-2.5" stroke="#00C9A7" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Analyzed
+            </div>
+          ) : (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 9px", borderRadius: 20, fontWeight: 500, border: `0.5px solid ${BORDER2}`, background: "transparent", color: MUTED }}>
+              Manual entry
+            </div>
+          )}
         </div>
+
+        {/* Run valuation prompt — only on manual/unanalyzed deals */}
+        {!isAnalyzed && (
+          <a
+            href="/napkin"
+            onClick={(e) => e.stopPropagation()}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,201,167,0.05)", border: "0.5px dashed rgba(0,201,167,0.3)", borderRadius: 8, padding: "8px 12px", marginBottom: ".75rem", textDecoration: "none" }}
+          >
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 500, color: TEAL }}>Run the Deal Analyzer →</div>
+              <div style={{ fontSize: 10, color: MUTED, marginTop: 1 }}>Get offer range, DSCR, IRR, and a full structure</div>
+            </div>
+          </a>
+        )}
 
         {/* Metrics row 1 */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginBottom: ".75rem" }}>
@@ -238,6 +293,16 @@ function DealCard({ deal, onToggle, onEdit, onMoveToDiligence, dimmed }: {
             onClick={(e) => { e.stopPropagation(); onEdit(deal.id); }}
             style={{ fontSize: 11, padding: "4px 10px", borderRadius: 6, border: `.5px solid ${TEAL_BD}`, background: TEAL_BG, color: TEAL, cursor: "pointer" }}>
             Edit
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm(`Remove "${deal.name}" from your pipeline? This cannot be undone.`)) {
+                onDelete(deal.id);
+              }
+            }}
+            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 6, border: `0.5px solid rgba(226,75,74,0.3)`, background: "transparent", color: DANGER, cursor: "pointer" }}>
+            Remove
           </button>
         </div>
       </div>
@@ -393,13 +458,24 @@ function DealModal({ open, editDeal, onSave, onClose }: {
 
 // ── Main dashboard ────────────────────────────────────────────────────────────
 export function PipelineDashboard() {
-  const [deals, setDeals] = useState<Deal[]>(SEED_DEALS);
-  const [nextId, setNextId] = useState(5);
+  const [deals, setDeals] = useState<Deal[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
   const [toastMsg, setToastMsg] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+
+  // Load deals from API on mount
+  useEffect(() => {
+    fetch("/api/deals")
+      .then((r) => r.json())
+      .then((rows) => {
+        if (Array.isArray(rows)) setDeals(rows.map(apiToDeal));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMsg(msg); setToastVisible(true);
@@ -409,24 +485,82 @@ export function PipelineDashboard() {
   const openModal = (deal: Deal | null = null) => { setEditingDeal(deal); setModalOpen(true); };
   const closeModal = () => { setModalOpen(false); setEditingDeal(null); };
 
-  const saveDeal = (data: Omit<Deal, "id" | "selected">) => {
+  const saveDeal = async (data: Omit<Deal, "id" | "selected">) => {
     if (editingDeal) {
-      setDeals((prev) => prev.map((d) => d.id === editingDeal.id ? { ...d, ...data } : d));
-      showToast("Deal updated");
+      // PATCH existing deal
+      const res = await fetch("/api/deals", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingDeal.id,
+          name: data.name,
+          stage: data.stage,
+          sde: data.sde || null,
+          asking_price: data.ask || null,
+          notes: data.notes,
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setDeals((prev) => prev.map((d) => d.id === editingDeal.id ? { ...apiToDeal(updated), selected: d.selected } : d));
+        showToast("Deal updated");
+      }
     } else {
-      setDeals((prev) => [...prev, { ...data, id: nextId, selected: false }]);
-      setNextId((n) => n + 1);
-      showToast("Deal added to pipeline");
+      // POST new deal
+      const res = await fetch("/api/deals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          stage: data.stage,
+          sde: data.sde || null,
+          asking_price: data.ask || null,
+          notes: data.notes,
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setDeals((prev) => [apiToDeal(created), ...prev]);
+        showToast("Deal added to pipeline");
+      } else {
+        const d = await res.json();
+        showToast(d.error ?? "Could not save deal");
+        return;
+      }
     }
     closeModal();
   };
 
-  const toggleSelect = (id: number) => setDeals((prev) => prev.map((d) => d.id === id ? { ...d, selected: !d.selected } : d));
+  const toggleSelect = (id: string) => setDeals((prev) => prev.map((d) => d.id === id ? { ...d, selected: !d.selected } : d));
   const clearSelection = () => setDeals((prev) => prev.map((d) => ({ ...d, selected: false })));
 
-  const moveToDiligence = (id: number) => {
-    setDeals((prev) => prev.map((d) => d.id === id ? { ...d, stage: "diligence" } : d));
-    showToast("Moved to due diligence");
+  const moveToDiligence = async (id: string) => {
+    const res = await fetch("/api/deals", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, stage: "diligence" }),
+    });
+    if (res.ok) {
+      setDeals((prev) => prev.map((d) => d.id === id ? { ...d, stage: "diligence" } : d));
+      showToast("Moved to due diligence");
+    } else {
+      const d = await res.json();
+      showToast(d.error ?? "Could not move to due diligence");
+    }
+  };
+
+  const deleteDeal = async (id: string) => {
+    const res = await fetch("/api/deals", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      setDeals((prev) => prev.filter((d) => d.id !== id));
+      showToast("Deal removed");
+    } else {
+      showToast("Could not remove deal");
+    }
   };
 
   // Derived
@@ -510,7 +644,9 @@ export function PipelineDashboard() {
         {selected.length >= 2 && <CompareBar deals={deals} onClear={clearSelection} />}
 
         {/* Deals grid */}
-        {deals.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "4rem 2rem", color: MUTED, fontSize: 13 }}>Loading your pipeline…</div>
+        ) : deals.length === 0 ? (
           <div style={{ textAlign: "center", padding: "4rem 2rem", background: NAVY2, border: `.5px dashed ${BORDER2}`, borderRadius: 16 }}>
             <svg style={{ width: 48, height: 48, margin: "0 auto 1rem", opacity: 0.25 }} viewBox="0 0 48 48" fill="none">
               <rect x="4" y="8" width="40" height="32" rx="6" stroke="currentColor" strokeWidth="1.5" />
@@ -519,7 +655,7 @@ export function PipelineDashboard() {
               <line x1="12" y1="30" x2="22" y2="30" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <div style={{ fontFamily: DISPLAY, fontSize: 17, fontWeight: 600, marginBottom: ".5rem" }}>No deals in your pipeline</div>
-            <div style={{ fontSize: 13, color: MUTED, maxWidth: 360, margin: "0 auto 1.25rem", lineHeight: 1.6 }}>Add your first acquisition target to start tracking. Pull from the sourcing tool or add manually.</div>
+            <div style={{ fontSize: 13, color: MUTED, maxWidth: 360, margin: "0 auto 1.25rem", lineHeight: 1.6 }}>Run the Deal Analyzer and save a deal, or add one manually below.</div>
             <button onClick={() => openModal(null)} style={{ fontSize: 13, padding: "8px 20px", borderRadius: 8, border: "none", background: TEAL, color: NAVY, fontWeight: 600, cursor: "pointer" }}>+ Add your first deal</button>
           </div>
         ) : filtered.length === 0 ? (
@@ -536,6 +672,7 @@ export function PipelineDashboard() {
                 onToggle={toggleSelect}
                 onEdit={(id) => openModal(deals.find((d) => d.id === id) ?? null)}
                 onMoveToDiligence={moveToDiligence}
+                onDelete={deleteDeal}
                 dimmed={selected.length > 0 && !deal.selected}
               />
             ))}

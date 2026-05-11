@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/subscription";
+import { NavMobileMenu } from "./nav-mobile-menu";
 
 function TetherLogo() {
   return (
@@ -17,9 +18,26 @@ export async function Nav() {
   const user = await getUser();
   const subscribed = user ? await hasActiveSubscription(user.id) : false;
 
+  const subscriberLinks = [
+    { label: "Sourcing", href: "/sourcing" },
+    { label: "QoE", href: "/qoe" },
+    { label: "Deal Analyzer", href: "/napkin" },
+    { label: "Pipeline", href: "/pipeline" },
+    { label: "Workspace", href: "/dd-demo" },
+  ];
+
+  const marketingLinks = [
+    { label: "How it works", href: "#how-it-works" },
+    { label: "See examples", href: "#examples" },
+    { label: "Pricing", href: "#pricing" },
+  ];
+
+  const ctaHref = subscribed ? "/dashboard" : "/pricing";
+  const ctaLabel = subscribed ? "My tools" : user ? "Upgrade" : "Start free — 1 month free";
+
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between border-b border-[0.5px] border-border px-10 py-[1.1rem] backdrop-blur-nav"
+      className="sticky top-0 z-50 flex items-center justify-between border-b border-[0.5px] border-border px-5 py-[1.1rem] md:px-10"
       style={{ background: "rgba(10,22,40,0.97)" }}
     >
       <Link href={subscribed ? "/dashboard" : "/"} className="flex items-center gap-2.5 no-underline">
@@ -27,67 +45,41 @@ export async function Nav() {
         <span className="text-[20px] font-bold tracking-tether-tight text-warm">tether</span>
       </Link>
 
+      {/* Desktop nav links */}
       {subscribed ? (
-        /* ── Subscriber nav ── */
         <div className="hidden items-center gap-8 md:flex">
-          <Link href="/sourcing" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Sourcing
-          </Link>
-          <Link href="/qoe" className="text-[13px] text-muted transition-colors hover:text-warm">
-            QoE
-          </Link>
-          <Link href="/napkin" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Deal Analyzer
-          </Link>
-          <Link href="/pipeline" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Pipeline
-          </Link>
-          <Link href="/dd-demo" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Workspace
-          </Link>
+          {subscriberLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="text-[13px] text-muted transition-colors hover:text-warm">
+              {l.label}
+            </Link>
+          ))}
         </div>
       ) : (
-        /* ── Marketing nav ── */
         <div className="hidden items-center gap-8 md:flex">
-          <Link href="#how-it-works" className="text-[13px] text-muted transition-colors hover:text-warm">
-            How it works
-          </Link>
-          <Link href="#examples" className="text-[13px] text-muted transition-colors hover:text-warm">
-            See examples
-          </Link>
-          <Link href="#pricing" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Pricing
-          </Link>
-          <Link href="/napkin" className="text-[13px] text-muted transition-colors hover:text-warm">
-            Deal Analyzer
-          </Link>
+          {marketingLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="text-[13px] text-muted transition-colors hover:text-warm">
+              {l.label}
+            </Link>
+          ))}
         </div>
       )}
 
-      <div className="flex items-center gap-3">
-        {subscribed ? (
-          <Link
-            href="/dashboard"
-            className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
-          >
-            My tools
-          </Link>
-        ) : user ? (
-          <Link
-            href="/pricing"
-            className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
-          >
-            Upgrade
-          </Link>
-        ) : (
-          <a
-            href="/pricing"
-            className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
-          >
-            Start free — 1 month free
-          </a>
-        )}
+      {/* Desktop CTA */}
+      <div className="hidden md:flex items-center gap-3">
+        <Link
+          href={ctaHref}
+          className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
+        >
+          {ctaLabel}
+        </Link>
       </div>
+
+      {/* Mobile hamburger */}
+      <NavMobileMenu
+        links={subscribed ? subscriberLinks : marketingLinks}
+        ctaHref={ctaHref}
+        ctaLabel={ctaLabel}
+      />
     </nav>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { exportQoEPDF } from "@/lib/pdf-export";
 
 // ── Color constants (match legacy/qoe.html) ───────────────────────────────────
 const TEAL = "#00C9A7";
@@ -487,6 +488,50 @@ export function QoETool() {
           <button onClick={exportCSV}
             style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: `1px solid ${TEAL}`, background: TEAL, color: NAVY, cursor: "pointer" }}>
             Export CSV ↓
+          </button>
+          <button
+            onClick={async () => {
+              const getAdj = (k: string, y: string) => adjs[`${k}__${y}`] ?? "";
+              const adjVal = (k: string, y: string, raw: number) => {
+                const a = getAdj(k, y);
+                return (raw || 0) + (a === "" ? 0 : Number(a));
+              };
+              const makeRows = (items: Record<string, Record<string, number>>) =>
+                Object.entries(items).map(([k, vals]) => ({
+                  label: k,
+                  rawVals: Object.fromEntries(years.map((y) => [y, vals[y] || 0])),
+                  adjVals: Object.fromEntries(years.map((y) => [y, adjVal(k, y, vals[y] || 0)])),
+                }));
+              await exportQoEPDF({
+                years,
+                revRaw,
+                revAdj,
+                expRaw,
+                expAdj,
+                noiRaw,
+                noiAdj,
+                revenueRows: makeRows(revenue),
+                expenseRows: makeRows(expenses),
+              });
+            }}
+            style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: `1px solid ${TEAL}`, background: "transparent", color: TEAL, cursor: "pointer" }}>
+            Export PDF ↓
+          </button>
+          <button
+            onClick={() => {
+              // Save QoE results to localStorage so Deal Analyzer can pre-fill year data
+              const handoff = {
+                years: years.map((y, i) => ({
+                  label: y,
+                  revenue: Math.round(revAdj[y] || 0),
+                  sde: Math.round(noiAdj[y] || 0),
+                })),
+              };
+              localStorage.setItem("tether_qoe_handoff", JSON.stringify(handoff));
+              window.location.href = "/napkin";
+            }}
+            style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: "1px solid #AFA9EC", background: "rgba(175,169,236,0.12)", color: "#AFA9EC", cursor: "pointer", whiteSpace: "nowrap" }}>
+            Take to Deal Analyzer →
           </button>
         </div>
       </div>

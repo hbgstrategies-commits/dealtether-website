@@ -1,13 +1,13 @@
 export function WhyBuyersFail() {
   return (
-    <section className="mx-auto max-w-[960px] px-10 py-20">
+    <section className="mx-auto max-w-[960px] px-5 py-14 md:px-10 md:py-20">
       <p className="mb-4 text-center text-[11px] font-bold uppercase tracking-[0.1em] text-danger">
         The hard truth
       </p>
-      <h2 className="mb-3 text-center text-[36px] font-bold leading-tight tracking-tether-tight text-warm">
+      <h2 className="mb-3 text-center text-[28px] font-bold leading-tight tracking-tether-tight text-warm md:text-[36px]">
         Why most buyers lose money
       </h2>
-      <p className="mx-auto mb-14 max-w-[540px] text-center text-[17px] leading-relaxed text-muted">
+      <p className="mx-auto mb-10 max-w-[540px] text-center text-[15px] leading-relaxed text-muted md:mb-14 md:text-[17px]">
         Business acquisitions fail in three predictable ways. If you&apos;re going into a deal without a system for each one, you&apos;re exposed.
       </p>
 
@@ -70,7 +70,7 @@ function FailCard({
 }) {
   return (
     <div
-      className="relative overflow-hidden rounded-2xl p-7"
+      className="relative overflow-hidden rounded-2xl p-6 md:p-7"
       style={{
         background: "var(--navy2)",
         border: "0.5px solid rgba(226,74,74,0.2)",
@@ -79,7 +79,7 @@ function FailCard({
     >
       <div className="absolute inset-x-0 top-0 h-[3px] bg-danger" />
       <div
-        className="mb-3 text-[40px] font-bold leading-none"
+        className="mb-3 text-[36px] font-bold leading-none md:text-[40px]"
         style={{ color: "rgba(226,74,74,0.15)", letterSpacing: "-2px" }}
       >
         {num}

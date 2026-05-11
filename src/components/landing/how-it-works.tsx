@@ -28,8 +28,8 @@ const STAGES: Stage[] = [
       { bold: "Acquisition signals flagged", rest: " — retiring owner, declining reviews, outdated website" },
       { bold: "Status tracking built in", rest: " — New, Contacted, Responded, In Diligence" },
     ],
-    ctaHref: "/sourcing",
-    ctaLabel: "Try the sourcing tool",
+    ctaHref: "/pricing",
+    ctaLabel: "Get access →",
     mockup: "sourcing",
   },
   {
@@ -43,8 +43,8 @@ const STAGES: Stage[] = [
       { bold: "Edit and annotate inline", rest: " — adjust any line item with a reason" },
       { bold: "Export a clean CSV", rest: " — share with your lender, advisor, or CPA" },
     ],
-    ctaHref: "/qoe",
-    ctaLabel: "Try the Financial Normalizer",
+    ctaHref: "/pricing",
+    ctaLabel: "Get access →",
     mockup: "qoe",
   },
   {
@@ -58,8 +58,8 @@ const STAGES: Stage[] = [
       { bold: "Live financing stack", rest: " — model SBA loan, seller note, and down payment" },
       { bold: "DSCR, WACC, IRR", rest: " — the metrics your bank will look at" },
     ],
-    ctaHref: "/napkin",
-    ctaLabel: "Try the Deal Analyzer",
+    ctaHref: "/pricing",
+    ctaLabel: "Start your free trial →",
     flip: true,
     mockup: "valuation",
   },
@@ -74,8 +74,8 @@ const STAGES: Stage[] = [
       { bold: "Best deal highlighted", rest: " — color-coded metrics show which deal wins each category" },
       { bold: "One click to DD", rest: " — push the winning deal straight into the execution workspace" },
     ],
-    ctaHref: "/pipeline",
-    ctaLabel: "See the pipeline dashboard",
+    ctaHref: "/pricing",
+    ctaLabel: "Get access →",
     mockup: "pipeline",
   },
   {
@@ -89,8 +89,8 @@ const STAGES: Stage[] = [
       { bold: "Flag any issue", rest: " — with a required note that surfaces in the weekly report" },
       { bold: "Weekly automated report", rest: " — sent to all participants every Thursday" },
     ],
-    ctaHref: "/dd-demo",
-    ctaLabel: "See an interactive demo",
+    ctaHref: "/pricing",
+    ctaLabel: "Start your free trial →",
     flip: true,
     mockup: "dd",
   },
@@ -100,12 +100,12 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="border-y border-[0.5px] border-border px-10 py-20"
+      className="border-y border-[0.5px] border-border px-5 py-14 md:px-10 md:py-20"
       style={{ background: "var(--navy2)" }}
     >
       <div className="mx-auto max-w-[960px]">
         <p className="sec-label-teal mb-2 text-center">The acquisition system</p>
-        <h2 className="mb-2 text-center text-[34px] font-bold leading-tight tracking-tether-tight text-warm">
+        <h2 className="mb-2 text-center text-[26px] font-bold leading-tight tracking-tether-tight text-warm md:text-[34px]">
           Five stages. One integrated system. Built for how deals actually work.
         </h2>
         <p className="mx-auto mb-0 max-w-[600px] text-center text-base text-muted">
@@ -116,7 +116,7 @@ export function HowItWorks() {
           {STAGES.map((s) => (
             <div
               key={s.num}
-              className={`grid items-center gap-12 border-b border-[0.5px] border-border py-14 last:border-b-0 md:grid-cols-2 ${
+              className={`grid items-center gap-8 border-b border-[0.5px] border-border py-10 last:border-b-0 md:gap-12 md:py-14 md:grid-cols-2 ${
                 s.flip ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
@@ -125,7 +125,7 @@ export function HowItWorks() {
                   Stage {s.num} of 05
                   {s.beta && <BetaBadge />}
                 </div>
-                <div className="mb-1 text-[28px] font-bold leading-tight tracking-tether-tight text-warm">
+                <div className="mb-1 text-[22px] font-bold leading-tight tracking-tether-tight text-warm md:text-[28px]">
                   {s.outcome}
                 </div>
                 <div

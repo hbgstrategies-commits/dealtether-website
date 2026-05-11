@@ -1,25 +1,25 @@
 export function FinalCta() {
   return (
-    <section className="border-t border-[0.5px] border-border px-10 py-20 text-center" style={{ background: "var(--navy2)" }}>
-      <h2 className="mb-3 text-[40px] font-bold leading-tight text-warm" style={{ letterSpacing: "-1px" }}>
+    <section className="border-t border-[0.5px] border-border px-5 py-14 text-center md:px-10 md:py-20" style={{ background: "var(--navy2)" }}>
+      <h2 className="mb-3 text-[32px] font-bold leading-tight text-warm md:text-[40px]" style={{ letterSpacing: "-1px" }}>
         Stop guessing. Start <span className="text-teal">closing.</span>
       </h2>
-      <p className="mx-auto mb-8 max-w-lg text-[16px] leading-relaxed text-muted">
+      <p className="mx-auto mb-8 max-w-lg text-[15px] leading-relaxed text-muted md:text-[16px]">
         Your first month is free. No credit card required to start.
         <br />
         One bad acquisition decision costs more than a year of Tether.
       </p>
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <a
           href="/pricing"
-          className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
+          className="w-full rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim sm:w-auto"
           style={{ letterSpacing: "-0.1px" }}
         >
           Start free — 1 month free
         </a>
         <a
           href="#how-it-works"
-          className="inline-block rounded-[9px] border border-[0.5px] border-border px-[28px] py-[13px] text-[15px] font-medium text-warm transition-colors hover:bg-navy-100"
+          className="w-full rounded-[9px] border border-[0.5px] border-border px-[28px] py-[13px] text-[15px] font-medium text-warm transition-colors hover:bg-navy-100 sm:w-auto"
         >
           See how it works
         </a>
