@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { getUser } from "@/lib/auth";
+import { hasActiveSubscription } from "@/lib/subscription";
+import { NavMobileMenu } from "./nav-mobile-menu";
 
 function TetherLogo() {
   return (
@@ -11,41 +14,72 @@ function TetherLogo() {
   );
 }
 
-export function Nav() {
+export async function Nav() {
+  const user = await getUser();
+  const subscribed = user ? await hasActiveSubscription(user.id) : false;
+
+  const subscriberLinks = [
+    { label: "Sourcing", href: "/sourcing" },
+    { label: "QoE", href: "/qoe" },
+    { label: "Deal Analyzer", href: "/napkin" },
+    { label: "Pipeline", href: "/pipeline" },
+    { label: "Workspace", href: "/dd-demo" },
+  ];
+
+  const marketingLinks = [
+    { label: "How it works", href: "#how-it-works" },
+    { label: "See examples", href: "#examples" },
+    { label: "Pricing", href: "#pricing" },
+  ];
+
+  const ctaHref = subscribed ? "/dashboard" : "/pricing";
+  const ctaLabel = subscribed ? "My tools" : user ? "Upgrade" : "Start free — 1 month free";
+
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between border-b border-[0.5px] border-border px-10 py-[1.1rem] backdrop-blur-nav"
+      className="sticky top-0 z-50 flex items-center justify-between border-b border-[0.5px] border-border px-5 py-[1.1rem] md:px-10"
       style={{ background: "rgba(10,22,40,0.97)" }}
     >
-      <Link href="/" className="flex items-center gap-2.5 no-underline">
+      <Link href={subscribed ? "/dashboard" : "/"} className="flex items-center gap-2.5 no-underline">
         <TetherLogo />
         <span className="text-[20px] font-bold tracking-tether-tight text-warm">tether</span>
       </Link>
 
-      <div className="hidden items-center gap-8 md:flex">
-        <Link href="#how-it-works" className="text-[13px] text-muted transition-colors hover:text-warm">
-          How it works
-        </Link>
-        <Link href="/pipeline" className="text-[13px] text-muted transition-colors hover:text-warm">
-          Pipeline
-        </Link>
-        <Link href="#examples" className="text-[13px] text-muted transition-colors hover:text-warm">
-          See examples
-        </Link>
-        <Link href="#pricing" className="text-[13px] text-muted transition-colors hover:text-warm">
-          Pricing
-        </Link>
-        <Link href="/napkin" className="text-[13px] text-muted transition-colors hover:text-warm">
-          Deal Analyzer
+      {/* Desktop nav links */}
+      {subscribed ? (
+        <div className="hidden items-center gap-8 md:flex">
+          {subscriberLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="text-[13px] text-muted transition-colors hover:text-warm">
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="hidden items-center gap-8 md:flex">
+          {marketingLinks.map((l) => (
+            <Link key={l.href} href={l.href} className="text-[13px] text-muted transition-colors hover:text-warm">
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Desktop CTA */}
+      <div className="hidden md:flex items-center gap-3">
+        <Link
+          href={ctaHref}
+          className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
+        >
+          {ctaLabel}
         </Link>
       </div>
 
-      <a
-        href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
-        className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
-      >
-        Start free — 1 month free
-      </a>
+      {/* Mobile hamburger */}
+      <NavMobileMenu
+        links={subscribed ? subscriberLinks : marketingLinks}
+        ctaHref={ctaHref}
+        ctaLabel={ctaLabel}
+      />
     </nav>
   );
 }

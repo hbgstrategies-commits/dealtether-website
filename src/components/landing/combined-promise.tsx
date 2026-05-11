@@ -28,14 +28,14 @@ const BOXES = [
 
 export function CombinedPromise() {
   return (
-    <section className="mx-auto max-w-[800px] px-10 py-20 text-center">
+    <section className="mx-auto max-w-[800px] px-5 py-14 text-center md:px-10 md:py-20">
       <p className="sec-label-teal mb-4">The complete system</p>
-      <h2 className="mb-4 text-[38px] font-bold leading-tight text-warm" style={{ letterSpacing: "-1px" }}>
+      <h2 className="mb-4 text-[30px] font-bold leading-tight text-warm md:text-[38px]" style={{ letterSpacing: "-1px" }}>
         Five stages. One system.
         <br />
         <span className="text-teal">From sourcing to close — nothing left out.</span>
       </h2>
-      <p className="mx-auto mb-8 max-w-[640px] text-[18px] leading-relaxed text-muted">
+      <p className="mx-auto mb-8 max-w-[640px] text-[16px] leading-relaxed text-muted md:text-[18px]">
         Most buyers piece this together from spreadsheets, cold calls, generic checklists, and expensive advisors. Tether gives you the complete acquisition system — find targets, analyze financials, value the deal, compare opportunities, and execute diligence — built by an operator who has closed $60M+.
       </p>
 
@@ -54,8 +54,8 @@ export function CombinedPromise() {
       </div>
 
       <a
-        href="https://buy.stripe.com/14AfZieqPfSp3aR1wxcIE04"
-        className="inline-block rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim"
+        href="/pricing"
+        className="inline-block w-full rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim sm:w-auto"
         style={{ letterSpacing: "-0.1px" }}
       >
         Start free — 1 month free

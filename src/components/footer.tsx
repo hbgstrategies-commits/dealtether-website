@@ -20,8 +20,8 @@ export function Footer() {
       </Link>
       <div className="text-[12px] text-muted">© 2026 Deal Tether · dealtether.com</div>
       <div className="flex gap-6">
-        <a href="#" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Privacy</a>
-        <a href="#" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Terms</a>
+        <Link href="/privacy" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Privacy</Link>
+        <Link href="/terms" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Terms</Link>
         <a href="mailto:hbgstrategies@gmail.com" className="text-[12px] text-muted transition-colors hover:text-warm no-underline">Contact</a>
       </div>
     </footer>

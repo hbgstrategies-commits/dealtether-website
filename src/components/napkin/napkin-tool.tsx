@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { exportDealAnalyzerPDF } from "@/lib/pdf-export";
 import {
   runAnalysis,
   SCORE_FACTORS,
@@ -159,6 +160,7 @@ function scoreFromAnswers(answers: (boolean | null)[], isRisk: boolean): number 
 
 export function NapkinTool() {
   const [step, setStep] = useState<Step>(1);
+  const [businessName, setBusinessName] = useState("");
   const [use4Years, setUse4Years] = useState(false);
   const [useYtd, setUseYtd] = useState(false);
   const [ytdMonths, setYtdMonths] = useState("6");
@@ -206,6 +208,31 @@ export function NapkinTool() {
   const [addSrcCtr, setAddSrcCtr] = useState(0);
   const [fcGR, setFcGR] = useState([4, 2, 2, 4, 3]);
   const [fcEx, setFcEx] = useState([0, 0, 0, 0, 0]);
+
+  // Pre-fill year data from QoE handoff (if user clicked "Take to Deal Analyzer" from QoE)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("tether_qoe_handoff");
+      if (!raw) return;
+      localStorage.removeItem("tether_qoe_handoff"); // consume once
+      const handoff = JSON.parse(raw) as { years: { label: string; revenue: number; sde: number }[] };
+      if (!Array.isArray(handoff.years) || handoff.years.length === 0) return;
+      const count = Math.min(handoff.years.length, 4);
+      setUse4Years(count === 4);
+      setYears((prev) => {
+        const next = [...prev];
+        for (let i = 0; i < count; i++) {
+          next[i] = {
+            revenue: handoff.years[i].revenue > 0 ? String(handoff.years[i].revenue) : "",
+            sde: handoff.years[i].sde > 0 ? String(handoff.years[i].sde) : "",
+          };
+        }
+        return next;
+      });
+    } catch {
+      // ignore bad localStorage data
+    }
+  }, []);
 
   function updateYear(idx: number, field: "revenue" | "sde", value: string) {
     setYears((prev) => {
@@ -275,6 +302,18 @@ export function NapkinTool() {
         <span style={{ fontSize: 13, color: "var(--muted)", marginLeft: 6, marginTop: 3 }}>/ napkin value</span>
       </div>
 
+      {/* Business name */}
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em", display: "block", marginBottom: 5 }}>Business name (optional)</label>
+        <input
+          type="text"
+          placeholder="e.g. Apex Property Services"
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
+          style={{ background: "var(--navy2)", border: "1px solid rgba(0,201,167,0.18)", borderRadius: 8, color: "var(--warm)", padding: "9px 12px", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" }}
+        />
+      </div>
+
       <Stepper step={step} onChange={setStep} maxUnlocked={analysis ? 3 : step} />
 
       {step === 1 && (
@@ -318,6 +357,16 @@ export function NapkinTool() {
           scores={scores}
           askPrice={parse(askPrice)}
           cfGoal={parse(cfGoal)}
+          businessName={businessName}
+          yearInputs={(() => {
+            const count = use4Years ? 4 : 3;
+            const labels = ["Year 1", "Year 2", "Year 3", "Year 4"];
+            return years.slice(0, count).map((y, i) => ({
+              label: labels[i],
+              revenue: parse(y.revenue),
+              sde: parse(y.sde),
+            }));
+          })()}
           eqAmount={eqAmount} setEqAmount={setEqAmount}
           sbaAmount={sbaAmount} setSbaAmount={setSbaAmount}
           sbaRate={sbaRate} setSbaRate={setSbaRate}
@@ -931,6 +980,8 @@ function Step5Structure(props: {
   analysis: Analysis; activeMult: number;
   activeRange: { fmv: number; cashOffer: number; creativeOffer: number };
   scores: Record<string, number>; askPrice: number; cfGoal: number;
+  businessName: string;
+  yearInputs: { label: string; revenue: number; sde: number }[];
   eqAmount: string; setEqAmount: (v: string) => void;
   sbaAmount: string; setSbaAmount: (v: string) => void;
   sbaRate: string; setSbaRate: (v: string) => void;
@@ -947,6 +998,9 @@ function Step5Structure(props: {
 }) {
   const { analysis: a, activeRange, scores, askPrice, cfGoal, offerPrice, addSources } = props;
   const { fmv, cashOffer, creativeOffer } = activeRange;
+
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveError, setSaveError] = useState("");
 
   const eq = parse(props.eqAmount);
   const sbaA = parse(props.sbaAmount);
@@ -1216,6 +1270,91 @@ function Step5Structure(props: {
           })}
         </div>
       ))}
+
+      {/* Save to Pipeline */}
+      <div style={{ background: "rgba(0,201,167,0.06)", border: "1px solid rgba(0,201,167,0.2)", borderRadius: 12, padding: "16px 18px", marginBottom: 14 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "var(--warm)", marginBottom: 4 }}>Save to Pipeline</div>
+        <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 14, lineHeight: 1.5 }}>
+          Saves the business name, SDE, multiple, offer range, DSCR, and IRR so you can track and compare this deal in your pipeline.
+        </div>
+        {saveStatus === "saved" && (
+          <div style={{ fontSize: 13, color: "var(--teal)", fontWeight: 500, marginBottom: 10 }}>✓ Saved to your pipeline</div>
+        )}
+        {saveStatus === "error" && (
+          <div style={{ fontSize: 13, color: "var(--danger)", marginBottom: 10 }}>{saveError}</div>
+        )}
+        <button
+          disabled={saveStatus === "saving" || saveStatus === "saved"}
+          onClick={async () => {
+            setSaveStatus("saving");
+            setSaveError("");
+            try {
+              const res = await fetch("/api/deals", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  name: props.businessName.trim() || "Unnamed Deal",
+                  stage: "Valuation",
+                  sde: a.avgSDE,
+                  multiple: props.activeMult,
+                  asking_price: askPrice > 0 ? askPrice : null,
+                  offer_low: activeRange.cashOffer > 0 ? Math.round(activeRange.cashOffer) : null,
+                  offer_high: activeRange.creativeOffer > 0 ? Math.round(activeRange.creativeOffer) : null,
+                  dscr: tDS > 0 ? parseFloat(dscr.toFixed(2)) : null,
+                  irr: irr > 0 ? parseFloat((irr * 100).toFixed(1)) : null,
+                  notes: "",
+                }),
+              });
+              if (!res.ok) {
+                const d = await res.json();
+                throw new Error(d.error ?? "Failed to save. Make sure you're signed in.");
+              }
+              setSaveStatus("saved");
+            } catch (e: unknown) {
+              setSaveError(e instanceof Error ? e.message : "Something went wrong");
+              setSaveStatus("error");
+            }
+          }}
+          style={{
+            background: saveStatus === "saved" ? "rgba(0,201,167,0.15)" : "var(--teal)",
+            color: saveStatus === "saved" ? "var(--teal)" : "#0A1628",
+            border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 600, cursor: saveStatus === "saving" || saveStatus === "saved" ? "default" : "pointer", opacity: saveStatus === "saving" ? 0.7 : 1,
+          }}
+        >
+          {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "✓ Saved to pipeline" : "Save to pipeline →"}
+        </button>
+      </div>
+
+      {/* Download PDF */}
+      <div style={{ marginBottom: 14 }}>
+        <button
+          onClick={async () => {
+            await exportDealAnalyzerPDF({
+              businessName: props.businessName,
+              avgSDE: a.avgSDE,
+              activeMult: props.activeMult,
+              askPrice: askPrice,
+              offerPrice: offerPrice,
+              offerLow: Math.round(activeRange.cashOffer),
+              offerHigh: Math.round(activeRange.creativeOffer),
+              dscr: tDS > 0 ? dscr : 0,
+              irr: irr,
+              eq,
+              sbaAmount: sbaA,
+              sbaRate: sbaR,
+              sbaTerm: sbaT,
+              snAmount: snA,
+              snRate: snR,
+              snTerm: snT,
+              yearInputs: props.yearInputs,
+            });
+          }}
+          style={{ display: "flex", alignItems: "center", gap: 8, background: "transparent", border: "1px solid rgba(0,201,167,0.3)", borderRadius: 8, padding: "10px 18px", fontSize: 13, fontWeight: 500, color: "var(--teal)", cursor: "pointer" }}
+        >
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v9M4 7l3.5 3.5L11 7M2 13h11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Download PDF report
+        </button>
+      </div>
 
       <BtnRow>
         <GhostBtn onClick={props.onBack}>← Back to analysis</GhostBtn>

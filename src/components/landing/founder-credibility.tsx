@@ -1,18 +1,18 @@
 export function FounderCredibility() {
   return (
-    <section className="border-t border-[0.5px] border-border px-10 py-20" style={{ background: "var(--navy2)" }}>
+    <section className="border-t border-[0.5px] border-border px-5 py-14 md:px-10 md:py-20" style={{ background: "var(--navy2)" }}>
       <div className="mx-auto max-w-[1000px]">
         <p className="sec-label-teal mb-2 text-center">Built by someone who has done it</p>
-        <h2 className="mb-2 text-center text-[32px] font-bold leading-tight text-warm" style={{ letterSpacing: "-0.6px" }}>
+        <h2 className="mb-2 text-center text-[26px] font-bold leading-tight text-warm md:text-[32px]" style={{ letterSpacing: "-0.6px" }}>
           Not software built by engineers.
           <br />
           A system built from real deals.
         </h2>
-        <p className="mx-auto mb-10 max-w-[540px] text-center text-[15px] leading-relaxed text-muted">
+        <p className="mx-auto mb-10 max-w-[540px] text-center text-[14px] leading-relaxed text-muted md:text-[15px]">
           Tether was built by an operator who has personally closed over $60M in acquisitions and funded $20M+ in SBA loans through Live Oak Bank. Every tool, every task, every flag in the system came from a real deal — the mistakes, the near-misses, and the systems built to prevent them.
         </p>
 
-        <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
             { num: "$60M+", label: "In acquisitions closed", sub: "Personal track record across multiple industries and deal sizes" },
             { num: "$20M+", label: "In SBA loans funded", sub: "Via Live Oak Bank — the #1 SBA acquisition lender in the country" },
@@ -27,10 +27,10 @@ export function FounderCredibility() {
         </div>
 
         <div
-          className="mx-auto max-w-[700px] rounded-xl p-6"
+          className="mx-auto max-w-[700px] rounded-xl p-5 md:p-6"
           style={{ background: "var(--navy)", border: "0.5px solid var(--teal-bd)", borderLeft: "3px solid var(--teal)" }}
         >
-          <p className="mb-3 text-[14px] italic leading-[1.7] text-warm">
+          <p className="mb-3 text-[13px] italic leading-[1.7] text-warm md:text-[14px]">
             &ldquo;My father spent a 40-year career as a transaction attorney. I grew up learning that in acquisitions, the downside isn&apos;t just losing money — it&apos;s losing everything. I&apos;ve seen people overpay, miss critical risks, lose deals, and in the worst cases, lose their homes. That risk-awareness is in my DNA. I built Tether after working on hundreds of deals, compounding everything I&apos;ve learned, with one goal:{" "}
             <strong className="not-italic text-teal">no one defaults.</strong>&rdquo;
           </p>
