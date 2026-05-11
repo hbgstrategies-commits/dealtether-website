@@ -15,7 +15,6 @@ const MUTED = "#9AA5B4";
 const BORDER = "#1E3A5F";
 const AMBER = "#E8A020";
 const AMBER_BG = "rgba(232,160,32,0.08)";
-const AMBER_BD = "rgba(232,160,32,0.2)";
 const DANGER = "#E24B4A";
 const BLUE = "#5BA3E8";
 const PURPLE = "#AFA9EC";

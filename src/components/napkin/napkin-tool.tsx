@@ -18,7 +18,7 @@ import {
   buildSG,
   pmtFn,
   offerRange,
-  severity,
+
   type AnalysisInput,
   type Analysis,
 } from "@/lib/valuation";
@@ -274,7 +274,7 @@ export function NapkinTool() {
     setCustMode(false);
     setSelReasons(new Set());
     const ap = parse(askPrice);
-    const { fairValue: fv, cashOffer: co, creativeOffer: cr } = analysis;
+    const { fairValue: fv, creativeOffer: cr } = analysis;
     const oMax = Math.round(Math.max(cr, ap > 0 ? Math.min(ap, fv * 1.3) : cr) / 5000) * 5000;
     const oStart = Math.round(Math.min(fv, oMax) / 5000) * 5000;
     setOfferPrice(oStart || Math.round(fv / 5000) * 5000 || 500000);
@@ -790,7 +790,7 @@ function Step4Analysis(props: {
               {REASONS.map((r) => (
                 <button key={r} onClick={() => {
                   const n = new Set(selReasons);
-                  n.has(r) ? n.delete(r) : n.add(r);
+                  if (n.has(r)) { n.delete(r); } else { n.add(r); }
                   setSelReasons(n);
                 }} style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, border: `1px solid ${selReasons.has(r) ? "var(--teal)" : "rgba(0,201,167,0.18)"}`, background: selReasons.has(r) ? "rgba(0,201,167,0.12)" : "transparent", color: selReasons.has(r) ? "var(--teal)" : "var(--muted)", cursor: "pointer", transition: "all 0.2s" }}>
                   {r}

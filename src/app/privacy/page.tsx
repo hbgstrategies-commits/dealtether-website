@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="Payments">
-          <p>Payments are processed by Stripe. Tether does not store your credit card information. Stripe's privacy policy governs how your payment data is handled. You can review it at stripe.com/privacy.</p>
+          <p>Payments are processed by Stripe. Tether does not store your credit card information. Stripe&apos;s privacy policy governs how your payment data is handled. You can review it at stripe.com/privacy.</p>
         </Section>
 
         <Section title="Data storage">

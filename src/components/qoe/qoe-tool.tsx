@@ -521,7 +521,7 @@ export function QoETool() {
             onClick={() => {
               // Save QoE results to localStorage so Deal Analyzer can pre-fill year data
               const handoff = {
-                years: years.map((y, i) => ({
+                years: years.map((y) => ({
                   label: y,
                   revenue: Math.round(revAdj[y] || 0),
                   sde: Math.round(noiAdj[y] || 0),

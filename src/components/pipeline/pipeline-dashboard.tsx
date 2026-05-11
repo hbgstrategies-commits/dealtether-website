@@ -342,7 +342,7 @@ function CompareBar({ deals, onClear }: { deals: Deal[]; onClear: () => void }) 
           const maxV = Math.max(...vals.filter((v) => v > 0));
           return [
             <div key={m.label + "_l"} style={{ fontSize: 10, color: MUTED, fontFamily: MONO, textTransform: "uppercase", letterSpacing: ".05em", paddingTop: 6 }}>{m.label}</div>,
-            ...sel.map((d, i) => {
+            ...sel.map((d) => {
               const raw = m.fn(d);
               const numVal = parseFloat(raw ?? "0") || 0;
               const pct = maxV > 0 ? numVal / maxV * 100 : 0;

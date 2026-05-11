@@ -32,7 +32,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="Acceptable use">
-          <p>You may not use Tether to violate any law, infringe on others' rights, reverse-engineer the platform, or resell access without permission. Accounts found in violation may be terminated without refund.</p>
+          <p>You may not use Tether to violate any law, infringe on others&apos; rights, reverse-engineer the platform, or resell access without permission. Accounts found in violation may be terminated without refund.</p>
         </Section>
 
         <Section title="Availability">
@@ -40,7 +40,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="Limitation of liability">
-          <p>To the maximum extent permitted by law, Deal Tether's liability to you for any claim arising from use of the service is limited to the amount you paid us in the 3 months preceding the claim. We are not liable for any indirect, consequential, or speculative damages, including losses from acquisition decisions made using Tether's tools.</p>
+          <p>To the maximum extent permitted by law, Deal Tether&apos;s liability to you for any claim arising from use of the service is limited to the amount you paid us in the 3 months preceding the claim. We are not liable for any indirect, consequential, or speculative damages, including losses from acquisition decisions made using Tether&apos;s tools.</p>
         </Section>
 
         <Section title="Governing law">
