@@ -24,6 +24,7 @@ export async function Nav() {
     { label: "Deal Analyzer", href: "/napkin" },
     { label: "Pipeline", href: "/pipeline" },
     { label: "Workspace", href: "/dd-demo" },
+    { label: "Account", href: "/account" },
   ];
 
   const marketingLinks = [
@@ -66,6 +67,14 @@ export async function Nav() {
 
       {/* Desktop CTA */}
       <div className="hidden md:flex items-center gap-3">
+        {!user && (
+          <Link
+            href="/login"
+            className="text-[13px] text-muted transition-colors hover:text-warm"
+          >
+            Log in
+          </Link>
+        )}
         <Link
           href={ctaHref}
           className="rounded-lg bg-teal px-[18px] py-[7px] text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
@@ -79,6 +88,7 @@ export async function Nav() {
         links={subscribed ? subscriberLinks : marketingLinks}
         ctaHref={ctaHref}
         ctaLabel={ctaLabel}
+        showLogin={!user}
       />
     </nav>
   );

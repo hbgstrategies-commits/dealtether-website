@@ -9,10 +9,12 @@ export function NavMobileMenu({
   links,
   ctaHref,
   ctaLabel,
+  showLogin = false,
 }: {
   links: NavLink[];
   ctaHref: string;
   ctaLabel: string;
+  showLogin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -56,10 +58,20 @@ export function NavMobileMenu({
               {link.label}
             </Link>
           ))}
+          {showLogin && (
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="mt-4 block rounded-lg py-3 text-center text-[14px] font-medium text-muted transition-colors hover:text-warm"
+              style={{ border: "0.5px solid #1E3A5F" }}
+            >
+              Log in
+            </Link>
+          )}
           <Link
             href={ctaHref}
             onClick={() => setOpen(false)}
-            className="mt-4 block rounded-lg bg-teal py-3 text-center text-[14px] font-semibold text-navy"
+            className="mt-3 block rounded-lg bg-teal py-3 text-center text-[14px] font-semibold text-navy"
           >
             {ctaLabel}
           </Link>
