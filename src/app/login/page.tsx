@@ -58,7 +58,9 @@ export default async function LoginPage({
               Send magic link
             </button>
             {params.error && (
-              <p className="text-sm text-danger">{params.error}</p>
+              <div className="rounded-lg border border-[0.5px] px-4 py-3" style={{ borderColor: "rgba(226,74,74,0.3)", background: "rgba(226,74,74,0.06)" }}>
+                <p className="text-sm text-danger">{params.error}</p>
+              </div>
             )}
           </form>
         )}
