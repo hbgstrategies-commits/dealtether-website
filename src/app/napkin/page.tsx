@@ -4,6 +4,7 @@ import { Paywall } from "@/components/paywall";
 import { getUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { NapkinTool } from "@/components/napkin/napkin-tool";
+import { DisclaimerGate } from "@/components/napkin/disclaimer-gate";
 
 export const metadata = {
   title: "Deal Analyzer",
@@ -31,7 +32,9 @@ export default async function NapkinPage() {
                 range. In about 3 minutes.
               </p>
             </div>
-            <NapkinTool />
+            <DisclaimerGate>
+              <NapkinTool />
+            </DisclaimerGate>
           </div>
         ) : (
           <Paywall

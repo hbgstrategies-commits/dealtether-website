@@ -242,7 +242,7 @@ export async function exportDealAnalyzerPDF(data: DealAnalyzerPDFData) {
   doc.setFontSize(7);
   doc.setFont("helvetica", "normal");
   doc.text(
-    "Pre-tax estimates for illustrative purposes only. Not financial or legal advice. Consult a qualified advisor before any acquisition decision.",
+    "For informational purposes only. Not financial, legal, investment, or tax advice. All figures are pre-tax estimates based on user-provided inputs. Actual outcomes may differ materially. SBA eligibility subject to lender approval. Consult a qualified M&A advisor, CPA, and lender before executing any transaction.",
     W / 2, pageH - 7, { align: "center", maxWidth: W - margin * 2 }
   );
 

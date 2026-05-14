@@ -1359,7 +1359,7 @@ function Step5Structure(props: {
       <BtnRow>
         <GhostBtn onClick={props.onBack}>← Back to analysis</GhostBtn>
       </BtnRow>
-      <Disc>All cash flow, DSCR, WACC, and IRR figures are pre-tax estimates for illustrative purposes only. Consult a qualified M&amp;A attorney, CPA, and lender before executing any acquisition. SBA loan eligibility subject to lender approval.</Disc>
+      <Disc>Tether&apos;s valuation estimates, offer ranges, DSCR calculations, and IRR projections are for informational purposes only and do not constitute financial, legal, investment, or tax advice. All figures are pre-tax estimates based solely on the inputs you provide. Actual business value and investment outcomes may differ materially. SBA loan eligibility is subject to lender approval and underwriting. You are solely responsible for any acquisition decisions you make. Consult a qualified M&amp;A advisor, CPA, and lender before executing any transaction.</Disc>
     </div>
   );
 }
@@ -1675,5 +1675,10 @@ function GhostBtn({ onClick, children }: { onClick: () => void; children: React.
 }
 
 function Disc({ children }: { children: React.ReactNode }) {
-  return <p style={{ marginTop: 12, fontSize: 10, color: "var(--muted)", lineHeight: 1.6 }}>{children}</p>;
+  return (
+    <div style={{ marginTop: 20, padding: "12px 16px", borderRadius: 8, background: "rgba(154,165,180,0.06)", border: "0.5px solid rgba(154,165,180,0.15)" }}>
+      <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--muted)", marginBottom: 4 }}>Disclaimer</div>
+      <p style={{ margin: 0, fontSize: 11, color: "var(--muted)", lineHeight: 1.7 }}>{children}</p>
+    </div>
+  );
 }
