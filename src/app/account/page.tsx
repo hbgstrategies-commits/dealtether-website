@@ -25,13 +25,13 @@ export default async function AccountPage() {
             Subscription
           </div>
           <div className="mb-4 text-lg text-warm">
-            {subscribed ? "Tether Pro — active" : "Free plan"}
+            {subscribed ? "Tether Solo — active" : "No active subscription"}
           </div>
           {subscribed ? (
             <ManageBillingButton />
           ) : (
             <a href="/pricing" className="btn-primary">
-              Upgrade to Pro
+              Start 30-day free trial
             </a>
           )}
         </section>

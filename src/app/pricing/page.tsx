@@ -29,14 +29,14 @@ export default async function PricingPage() {
             One plan. Every tool.
           </h1>
           <p className="mx-auto mt-3 max-w-lg text-muted">
-            First month free. No credit card required to start. Cancel anytime.
+            Free for 30 days, then $147/mo. Card required at signup — not charged until day 31. Cancel anytime.
           </p>
         </div>
 
         {/* Single plan card */}
         <div className="relative flex flex-col rounded-2xl p-8" style={{ border: "1.5px solid var(--teal)", background: "var(--navy)" }}>
           <div className="absolute -top-px left-1/2 -translate-x-1/2 whitespace-nowrap rounded-b-lg bg-teal px-4 py-1 text-[11px] font-semibold text-navy">
-            First month free
+            30-day free trial
           </div>
 
           <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-teal">Solo</div>
@@ -51,7 +51,7 @@ export default async function PricingPage() {
           <CheckoutButton
             isAuthenticated={!!user}
             priceId={soloPriceId}
-            label="Start free — 1 month free"
+            label="Start 30-day free trial"
             variant="primary"
           />
 

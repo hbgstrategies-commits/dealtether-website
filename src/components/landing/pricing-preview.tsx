@@ -49,7 +49,7 @@ export function PricingPreview() {
           {/* Solo plan card */}
           <div className="relative flex flex-col rounded-xl p-6" style={{ border: "1.5px solid var(--teal)", background: "var(--navy)" }}>
             <div className="absolute -top-px left-1/2 -translate-x-1/2 whitespace-nowrap rounded-b-lg bg-teal px-3.5 py-0.5 text-[11px] font-semibold text-navy">
-              First month free
+              30-day free trial
             </div>
             <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-teal">Solo</div>
             <div className="flex items-baseline gap-1">
@@ -63,7 +63,7 @@ export function PricingPreview() {
               href="/pricing"
               className="mb-5 block w-full rounded-lg bg-teal py-2.5 text-center text-[13px] font-semibold text-navy transition-colors hover:bg-teal-dim"
             >
-              Start free — 1 month free
+              Start 30-day free trial
             </a>
             <ul className="flex flex-col gap-2">
               {FEATURES.map((f, i) => (
@@ -81,7 +81,7 @@ export function PricingPreview() {
         </div>
 
         <p className="mt-5 text-center text-[12px] text-muted">
-          No credit card required to start · Cancel anytime · Billed monthly via Stripe
+          Card required at signup · Free for 30 days · then $147/mo · Cancel anytime
         </p>
       </div>
     </section>

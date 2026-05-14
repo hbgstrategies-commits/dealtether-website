@@ -58,7 +58,7 @@ export function CombinedPromise() {
         className="inline-block w-full rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim sm:w-auto"
         style={{ letterSpacing: "-0.1px" }}
       >
-        Start free — 1 month free
+        Start 30-day free trial
       </a>
     </section>
   );
