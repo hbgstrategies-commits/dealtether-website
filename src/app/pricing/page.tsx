@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { CheckoutButton } from "./checkout-button";
 import { getUser } from "@/lib/auth";
+import { hasActiveSubscription } from "@/lib/subscription";
 
 export const metadata = { title: "Pricing — Tether" };
 
@@ -17,6 +19,11 @@ const FEATURES = [
 
 export default async function PricingPage() {
   const user = await getUser();
+  const subscribed = user ? await hasActiveSubscription(user.id) : false;
+
+  // Active subscribers go straight to their dashboard
+  if (subscribed) redirect("/dashboard");
+
   const soloPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID ?? "";
 
   return (
@@ -28,7 +35,7 @@ export default async function PricingPage() {
         {user && (
           <div className="mb-8 rounded-xl px-5 py-4 text-center" style={{ background: "rgba(0,201,167,0.07)", border: "0.5px solid rgba(0,201,167,0.2)" }}>
             <div className="text-[13px] font-semibold text-teal mb-0.5">You&apos;re signed in ✓</div>
-            <div className="text-[12px] text-muted">Start your free trial below — no credit card required.</div>
+            <div className="text-[12px] text-muted">Card required at signup — free for 30 days, then $147/mo.</div>
           </div>
         )}
 
