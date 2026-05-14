@@ -13,7 +13,7 @@ import { FinalCta } from "@/components/landing/final-cta";
 
 import { redirect } from "next/navigation";
 
-type SearchParams = Promise<{ error?: string; error_code?: string; error_description?: string }>;
+type SearchParams = Promise<{ code?: string; error?: string; error_code?: string; error_description?: string }>;
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   otp_expired: "Your sign-in link has expired. Enter your email to get a new one.",
@@ -22,6 +22,12 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
 
 export default async function HomePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
+
+  // Successful magic link — Supabase sent the code here instead of /auth/callback.
+  // Forward it so the callback route can exchange it for a session.
+  if (params.code) {
+    redirect(`/auth/callback?code=${encodeURIComponent(params.code)}&next=${encodeURIComponent("/dashboard")}`);
+  }
 
   if (params.error || params.error_code) {
     const code = params.error_code ?? params.error ?? "access_denied";
