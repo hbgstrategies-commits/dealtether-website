@@ -5,7 +5,7 @@ export function FinalCta() {
         Stop guessing. Start <span className="text-teal">closing.</span>
       </h2>
       <p className="mx-auto mb-8 max-w-lg text-[15px] leading-relaxed text-muted md:text-[16px]">
-        Your first month is free. No credit card required to start.
+        Try Tether free for 30 days. Card required at signup — you won&apos;t be charged until day 31.
         <br />
         One bad acquisition decision costs more than a year of Tether.
       </p>
@@ -15,7 +15,7 @@ export function FinalCta() {
           className="w-full rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim sm:w-auto"
           style={{ letterSpacing: "-0.1px" }}
         >
-          Start free — 1 month free
+          Start 30-day free trial
         </a>
         <a
           href="#how-it-works"

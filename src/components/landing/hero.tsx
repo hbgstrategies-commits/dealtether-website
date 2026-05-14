@@ -25,7 +25,7 @@ export function Hero() {
           className="w-full rounded-[9px] bg-teal px-[30px] py-[13px] text-[15px] font-bold text-navy transition-all hover:-translate-y-px hover:bg-teal-dim sm:w-auto"
           style={{ letterSpacing: "-0.1px" }}
         >
-          Start free — 1 month free
+          Start 30-day free trial
         </a>
         <Link
           href="#how-it-works"
@@ -35,7 +35,7 @@ export function Hero() {
         </Link>
       </div>
       <p className="text-xs text-muted">
-        First month free &nbsp;·&nbsp; $147/mo after &nbsp;·&nbsp; Cancel anytime
+        Free for 30 days &nbsp;·&nbsp; then $147/mo &nbsp;·&nbsp; Card required at signup &nbsp;·&nbsp; Cancel anytime
       </p>
     </section>
   );
