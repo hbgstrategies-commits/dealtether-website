@@ -23,6 +23,15 @@ export default async function PricingPage() {
     <>
       <Nav />
       <main className="mx-auto max-w-[640px] px-5 py-14 md:px-6 md:py-20">
+
+        {/* Welcome banner for signed-in users who haven't subscribed yet */}
+        {user && (
+          <div className="mb-8 rounded-xl px-5 py-4 text-center" style={{ background: "rgba(0,201,167,0.07)", border: "0.5px solid rgba(0,201,167,0.2)" }}>
+            <div className="text-[13px] font-semibold text-teal mb-0.5">You&apos;re signed in ✓</div>
+            <div className="text-[12px] text-muted">Start your free trial below — no credit card required.</div>
+          </div>
+        )}
+
         <div className="mb-10 text-center">
           <span className="eyebrow-pill">Pricing</span>
           <h1 className="mt-5 text-[40px] font-bold tracking-tether-tight text-warm">

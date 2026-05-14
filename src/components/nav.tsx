@@ -33,7 +33,7 @@ export async function Nav() {
   ];
 
   const ctaHref = subscribed ? "/dashboard" : "/pricing";
-  const ctaLabel = subscribed ? "My tools" : user ? "Upgrade" : "Start free — 1 month free";
+  const ctaLabel = subscribed ? "My tools" : user ? "Start free trial →" : "Start free — 1 month free";
 
   return (
     <nav

@@ -9,5 +9,5 @@ export default async function SignupPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  redirect(`/login${next ? `?next=${encodeURIComponent(next)}` : ""}`);
+  redirect(`/login?next=${encodeURIComponent(next ?? "/pricing")}`);
 }
