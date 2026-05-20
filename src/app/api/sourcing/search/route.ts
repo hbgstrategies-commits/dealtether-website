@@ -12,9 +12,9 @@ export async function POST(req: Request) {
 
     const prompt = `You are a business sourcing assistant for an M&A acquisition tool called Tether (dealtether.com).
 
-Find up to 15 real ${industry} businesses located within ${radius} miles of ${location}.
+Generate a list of up to 15 plausible ${industry} businesses located within ${radius} miles of ${location}. Use your knowledge of real businesses in this area where possible, and fill in realistic estimates where exact data is unavailable.
 
-Use web search to find real companies with accurate details. For each business return:
+For each business return:
 - name: company name
 - city: city, state
 - distance: estimated miles from ${location} (e.g. "4.2 mi")
@@ -32,11 +32,9 @@ Use web search to find real companies with accurate details. For each business r
 
 Return ONLY a valid JSON array. No markdown, no explanation. Start with [ and end with ].`;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const message = await (client.messages.create as any)({
-      model: "claude-3-haiku-20240307",
+    const message = await client.messages.create({
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 5000,
-      tools: [{ type: "web_search_20250305", name: "web_search" }],
       messages: [{ role: "user", content: prompt }],
     });
 
