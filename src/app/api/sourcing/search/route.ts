@@ -34,7 +34,7 @@ Return ONLY a valid JSON array. No markdown, no explanation. Start with [ and en
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const message = await (client.messages.create as any)({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 5000,
       tools: [{ type: "web_search_20250305", name: "web_search" }],
       messages: [{ role: "user", content: prompt }],
