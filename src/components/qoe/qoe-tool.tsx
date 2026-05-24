@@ -250,8 +250,13 @@ function SectionTable({
   );
 }
 
+// ── Exported type for PM portal handoff ──────────────────────────────────────
+export type QoeHandoff = {
+  years: { label: string; revenue: number; sde: number }[];
+};
+
 // ── Main tool ─────────────────────────────────────────────────────────────────
-export function QoETool() {
+export function QoeTool({ onApproveForEOV }: { onApproveForEOV?: (data: QoeHandoff) => void } = {}) {
   const [files, setFiles] = useState<File[]>([]);
   const [result, setResult] = useState<QoeResult | null>(null);
   const [adjs, setAdjsState] = useState<Adjs>({});
@@ -469,6 +474,15 @@ export function QoETool() {
   const noiRaw = calcNOI(revenue, expenses, cogs, years, false);
   const noiAdj = calcNOI(revenue, expenses, cogs, years, true);
   const hasAdj = Object.keys(adjs).some((k) => adjs[k] !== "" && Number(adjs[k]) !== 0);
+
+  // Count adjustments that are missing a note (for checkpoint enforcement)
+  const adjsMissingNotes = Object.entries(adjs).filter(([k, v]) => {
+    if (v === "" || Number(v) === 0) return false;
+    const lastSep = k.lastIndexOf("__");
+    const rowKey = lastSep >= 0 ? k.substring(0, lastSep) : k;
+    return !notes[rowKey];
+  }).length;
+
   const tabs = ["revenue", "expenses", "summary", ...(aiNotes?.length ? ["observations"] : [])];
 
   return (
@@ -517,22 +531,38 @@ export function QoETool() {
             style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: `1px solid ${TEAL}`, background: "transparent", color: TEAL, cursor: "pointer" }}>
             Export PDF ↓
           </button>
-          <button
-            onClick={() => {
-              // Save QoE results to localStorage so Deal Analyzer can pre-fill year data
-              const handoff = {
-                years: years.map((y) => ({
-                  label: y,
-                  revenue: Math.round(revAdj[y] || 0),
-                  sde: Math.round(noiAdj[y] || 0),
-                })),
-              };
-              localStorage.setItem("tether_qoe_handoff", JSON.stringify(handoff));
-              window.location.href = "/napkin";
-            }}
-            style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: "1px solid #AFA9EC", background: "rgba(175,169,236,0.12)", color: "#AFA9EC", cursor: "pointer", whiteSpace: "nowrap" }}>
-            Take to Deal Analyzer →
-          </button>
+          {onApproveForEOV ? (
+            <button
+              onClick={() => {
+                const handoff: QoeHandoff = {
+                  years: years.map((y) => ({
+                    label: y,
+                    revenue: Math.round(revAdj[y] || 0),
+                    sde: Math.round(noiAdj[y] || 0),
+                  })),
+                };
+                onApproveForEOV(handoff);
+              }}
+              style={{ padding: "5px 14px", fontSize: 11, fontWeight: 700, borderRadius: 6, border: "none", background: TEAL, color: NAVY, cursor: "pointer", whiteSpace: "nowrap" }}>
+              Approve &amp; Send to EOV →
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                const handoff = {
+                  years: years.map((y) => ({
+                    label: y,
+                    revenue: Math.round(revAdj[y] || 0),
+                    sde: Math.round(noiAdj[y] || 0),
+                  })),
+                };
+                localStorage.setItem("tether_qoe_handoff", JSON.stringify(handoff));
+                window.location.href = "/napkin";
+              }}
+              style={{ padding: "5px 14px", fontSize: 11, fontWeight: 600, borderRadius: 6, border: "1px solid #AFA9EC", background: "rgba(175,169,236,0.12)", color: "#AFA9EC", cursor: "pointer", whiteSpace: "nowrap" }}>
+              Take to Deal Analyzer →
+            </button>
+          )}
         </div>
       </div>
 
@@ -559,6 +589,12 @@ export function QoETool() {
         {hasAdj && (
           <div style={{ padding: "8px 14px", background: TEAL_BG, border: `1px solid ${TEAL_BD}`, borderLeft: `3px solid ${TEAL}`, borderRadius: "0 6px 6px 0", fontSize: 12, color: TEAL, margin: "12px 0 0", fontWeight: 500 }}>
             Adjustments applied — summary reflects adjusted figures. Export captures both columns.
+          </div>
+        )}
+        {onApproveForEOV && adjsMissingNotes > 0 && (
+          <div style={{ padding: "8px 14px", background: "rgba(232,160,32,0.08)", border: `1px solid rgba(232,160,32,0.3)`, borderLeft: `3px solid ${AMBER}`, borderRadius: "0 6px 6px 0", fontSize: 12, color: AMBER, margin: "8px 0 0", fontWeight: 500, display: "flex", alignItems: "center", gap: 8 }}>
+            <span>⚠</span>
+            <span>{adjsMissingNotes} adjustment{adjsMissingNotes > 1 ? "s" : ""} missing a note — click <strong>note</strong> next to each adjusted line to explain the addback before approving.</span>
           </div>
         )}
         <div style={{ display: "flex", gap: 0, marginTop: hasAdj ? 8 : 0 }}>

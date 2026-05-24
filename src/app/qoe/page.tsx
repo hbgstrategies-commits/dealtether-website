@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer";
 import { Paywall } from "@/components/paywall";
 import { getUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/subscription";
-import { QoETool } from "@/components/qoe/qoe-tool";
+import { QoeTool as QoETool } from "@/components/qoe/qoe-tool";
 
 export const metadata = {
   title: "Quality of Earnings Mapper",

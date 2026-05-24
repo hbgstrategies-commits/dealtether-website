@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PMQuestionnaire } from "./pm-questionnaire";
 import { PMEov } from "./pm-eov";
-import { QoETool } from "@/components/qoe/qoe-tool";
+import { QoeTool, type QoeHandoff } from "@/components/qoe/qoe-tool";
 
 const NAVY = "#0A1628";
 const NAVY2 = "#1A2F50";
@@ -40,6 +40,7 @@ export function PMDealDetail({ dealId }: { dealId: string }) {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [qoeHandoff, setQoeHandoff] = useState<QoeHandoff | null>(null);
 
   useEffect(() => {
     fetch(`/api/pm/deals/${dealId}`)
@@ -70,6 +71,12 @@ export function PMDealDetail({ dealId }: { dealId: string }) {
 
   const saveEov = useCallback((inputs: unknown) => {
     save({ eov_inputs: inputs as Record<string, unknown> });
+  }, [save]);
+
+  const handleQoeApproval = useCallback(async (handoff: QoeHandoff) => {
+    setQoeHandoff(handoff);
+    await save({ qoe_data: handoff });
+    setTab("eov");
   }, [save]);
 
   const updateStatus = async (status: string) => {
@@ -184,9 +191,9 @@ export function PMDealDetail({ dealId }: { dealId: string }) {
       {tab === "qoe" && (
         <div>
           <div style={{ padding: "12px 16px", background: "rgba(0,201,167,0.06)", border: `1px solid rgba(0,201,167,0.15)`, borderRadius: 8, marginBottom: 18, fontSize: 12, color: MUTED }}>
-            <strong style={{ color: TEAL }}>Tip:</strong> Upload 3–4 years of P&Ls plus YTD. After reviewing the normalized numbers, go to the <strong style={{ color: WARM }}>EOV Report</strong> tab and enter those figures to generate the valuation.
+            <strong style={{ color: TEAL }}>Checkpoint 1:</strong> Upload 3–4 years of P&Ls. Review and annotate every adjustment (each one needs a note). When ready, click <strong style={{ color: WARM }}>Approve &amp; Send to EOV</strong> — it will auto-fill the financial inputs and open the EOV tab.
           </div>
-          <QoETool />
+          <QoeTool onApproveForEOV={handleQoeApproval} />
         </div>
       )}
 
@@ -195,6 +202,7 @@ export function PMDealDetail({ dealId }: { dealId: string }) {
           businessName={deal.business_name}
           questionnaire={deal.questionnaire ?? {}}
           initialInputs={deal.eov_inputs as Parameters<typeof PMEov>[0]["initialInputs"]}
+          qoeHandoff={qoeHandoff}
           onSave={saveEov}
           saving={saving}
         />

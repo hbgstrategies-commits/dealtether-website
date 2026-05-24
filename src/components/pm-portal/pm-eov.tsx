@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import type { QoeHandoff } from "@/components/qoe/qoe-tool";
 import { weightedAverage, benchM, fmt, fmtM, type YearInput } from "@/lib/valuation";
 
 const NAVY = "#0A1628";
@@ -100,16 +101,21 @@ const DEFAULT_INPUTS: EovInputs = {
 
 const n = (s: string) => parseFloat(s.replace(/[^0-9.-]/g, "")) || 0;
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+type AiScore = { score: number; reason: string };
+type AiScores = Record<string, AiScore>;
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 function SliderRow({
-  label, desc, value, onChange, max = 5, colorHigh = TEAL, colorLow = MUTED,
+  label, desc, value, onChange, max = 5, colorHigh = TEAL, colorLow = MUTED, aiScore,
 }: {
   label: string; desc: string; value: number; onChange: (v: number) => void;
-  max?: number; colorHigh?: string; colorLow?: string;
+  max?: number; colorHigh?: string; colorLow?: string; aiScore?: AiScore;
 }) {
   const col = value >= max * 0.7 ? colorHigh : value >= max * 0.4 ? AMBER : colorLow;
+  const aiApplied = aiScore && value === aiScore.score;
   return (
-    <div style={{ marginBottom: 14 }}>
+    <div style={{ marginBottom: 16 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
         <div>
           <span style={{ fontSize: 12, fontWeight: 600, color: WARM }}>{label}</span>
@@ -119,6 +125,21 @@ function SliderRow({
       </div>
       <input type="range" min={0} max={max} step={1} value={value} onChange={(e) => onChange(Number(e.target.value))}
         style={{ width: "100%", accentColor: col }} />
+      {aiScore && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5 }}>
+          <span style={{ fontSize: 11, color: MUTED }}>
+            AI suggests: <span style={{ color: aiApplied ? TEAL : AMBER, fontWeight: 600 }}>{aiScore.score}/{max}</span>
+            <span style={{ color: MUTED }}> — {aiScore.reason}</span>
+          </span>
+          {!aiApplied && (
+            <button onClick={() => onChange(aiScore.score)}
+              style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, border: `1px solid ${TEAL_BD}`, background: TEAL_BG, color: TEAL, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+              Apply
+            </button>
+          )}
+          {aiApplied && <span style={{ fontSize: 10, color: TEAL }}>✓ applied</span>}
+        </div>
+      )}
     </div>
   );
 }
@@ -143,17 +164,51 @@ export function PMEov({
   businessName,
   questionnaire,
   initialInputs,
+  qoeHandoff,
   onSave,
   saving,
 }: {
   businessName: string;
   questionnaire: Record<string, string>;
   initialInputs: Partial<EovInputs> | null;
+  qoeHandoff?: QoeHandoff | null;
   onSave: (inputs: EovInputs) => void;
   saving: boolean;
 }) {
-  const [inputs, setInputs] = useState<EovInputs>({ ...DEFAULT_INPUTS, ...(initialInputs ?? {}), doors: initialInputs?.doors ?? questionnaire?.doors ?? "", hoaUnits: initialInputs?.hoaUnits ?? questionnaire?.hoaUnits ?? "", mgmtFee: initialInputs?.mgmtFee ?? questionnaire?.mgmtFee ?? "10", ownerName: initialInputs?.ownerName ?? questionnaire?.ownerNames ?? "" });
+  // Build initial years: prefer qoeHandoff (just approved), then saved initialInputs, then defaults
+  const buildInitialYears = (): YearData[] => {
+    if (qoeHandoff?.years?.length) {
+      return qoeHandoff.years.map((y) => ({ label: y.label, revenue: String(y.revenue), sde: String(y.sde) }));
+    }
+    if (initialInputs?.years?.some((y) => y.revenue || y.sde)) {
+      return initialInputs.years;
+    }
+    return [EMPTY_YEAR, EMPTY_YEAR, EMPTY_YEAR];
+  };
+
+  const [inputs, setInputs] = useState<EovInputs>({
+    ...DEFAULT_INPUTS,
+    ...(initialInputs ?? {}),
+    years: buildInitialYears(),
+    doors: initialInputs?.doors ?? questionnaire?.doors ?? "",
+    hoaUnits: initialInputs?.hoaUnits ?? questionnaire?.hoaUnits ?? "",
+    mgmtFee: initialInputs?.mgmtFee ?? questionnaire?.mgmtFee ?? "10",
+    ownerName: initialInputs?.ownerName ?? questionnaire?.ownerNames ?? "",
+  });
   const [step, setStep] = useState<"financials" | "quality" | "report">("financials");
+  const [aiScores, setAiScores] = useState<AiScores | null>(null);
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // When a fresh qoeHandoff arrives, auto-populate years and jump to quality step
+  useEffect(() => {
+    if (!qoeHandoff?.years?.length) return;
+    setInputs((prev) => ({
+      ...prev,
+      years: qoeHandoff.years.map((y) => ({ label: y.label, revenue: String(y.revenue), sde: String(y.sde) })),
+    }));
+    setStep("quality");
+  }, [qoeHandoff]);
 
   const set = (key: keyof EovInputs, val: unknown) =>
     setInputs((p) => ({ ...p, [key]: val }));
@@ -164,6 +219,27 @@ export function PMEov({
       ys[i] = { ...ys[i], [key]: val };
       return { ...p, years: ys };
     });
+
+  const fetchAiScores = async () => {
+    setLoadingAI(true);
+    setAiError(null);
+    try {
+      const years = inputs.years
+        .filter((y) => y.revenue || y.sde)
+        .map((y) => ({ label: y.label, revenue: n(y.revenue), sde: n(y.sde) }));
+      const resp = await fetch("/api/pm/analyze-deal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionnaire, years, businessName }),
+      });
+      const data = await resp.json() as { scores?: AiScores; error?: string };
+      if (data.error) throw new Error(data.error);
+      if (data.scores) setAiScores(data.scores);
+    } catch (e) {
+      setAiError(e instanceof Error ? e.message : "AI analysis failed");
+    }
+    setLoadingAI(false);
+  };
 
   // ── Compute valuation ──────────────────────────────────────────────────────
   const analysis = useMemo(() => {
@@ -321,26 +397,47 @@ export function PMEov({
 
   const renderQuality = () => (
     <div>
+      {/* Checkpoint 2: AI recommendation banner */}
+      <div style={{ padding: "14px 18px", background: TEAL_BG, border: `1px solid ${TEAL_BD}`, borderRadius: 10, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" as const }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: WARM, marginBottom: 2 }}>
+            {aiScores ? "AI recommendations loaded" : "Get AI scoring recommendations"}
+          </div>
+          <div style={{ fontSize: 12, color: MUTED }}>
+            {aiScores
+              ? "Slider suggestions are shown below each factor — apply or override as needed."
+              : "Claude will analyze the questionnaire and financials to suggest starting positions for each factor."}
+          </div>
+          {aiError && <div style={{ fontSize: 12, color: AMBER, marginTop: 4 }}>{aiError}</div>}
+        </div>
+        <button
+          onClick={fetchAiScores}
+          disabled={loadingAI}
+          style={{ padding: "9px 20px", fontSize: 13, fontWeight: 600, borderRadius: 8, border: "none", background: loadingAI ? "rgba(0,201,167,0.3)" : TEAL, color: NAVY, cursor: loadingAI ? "not-allowed" : "pointer", whiteSpace: "nowrap" as const, flexShrink: 0 }}>
+          {loadingAI ? "Analyzing…" : aiScores ? "Re-run AI" : "Get AI Recommendations"}
+        </button>
+      </div>
+
       {/* Qualitative */}
       <div style={{ padding: "20px 24px", background: NAVY2, border: `1px solid ${BORDER}`, borderRadius: 10, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: WARM, marginBottom: 6 }}>Qualitative Scoring</div>
         <p style={{ fontSize: 12, color: MUTED, marginBottom: 18 }}>Score 1 (poor) to 5 (excellent). These scores adjust the valuation multiple up or down.</p>
-        <SliderRow label="Systems & Software" desc="PM software, automations, SOPs in place" value={inputs.qSystems} onChange={(v) => set("qSystems", v)} />
-        <SliderRow label="Team Quality" desc="PMs, admin, maintenance coordination depth" value={inputs.qTeam} onChange={(v) => set("qTeam", v)} />
-        <SliderRow label="Portfolio Mix & Quality" desc="Recurring revenue mix, HOA/LT stability" value={inputs.qPortfolio} onChange={(v) => set("qPortfolio", v)} />
-        <SliderRow label="Growth Trajectory" desc="Revenue trending up, door count growing" value={inputs.qGrowth} onChange={(v) => set("qGrowth", v)} />
-        <SliderRow label="Reputation & Brand" desc="Reviews, referrals, local market position" value={inputs.qBrand} onChange={(v) => set("qBrand", v)} />
+        <SliderRow label="Systems & Software" desc="PM software, automations, SOPs in place" value={inputs.qSystems} onChange={(v) => set("qSystems", v)} aiScore={aiScores?.qSystems} />
+        <SliderRow label="Team Quality" desc="PMs, admin, maintenance coordination depth" value={inputs.qTeam} onChange={(v) => set("qTeam", v)} aiScore={aiScores?.qTeam} />
+        <SliderRow label="Portfolio Mix & Quality" desc="Recurring revenue mix, HOA/LT stability" value={inputs.qPortfolio} onChange={(v) => set("qPortfolio", v)} aiScore={aiScores?.qPortfolio} />
+        <SliderRow label="Growth Trajectory" desc="Revenue trending up, door count growing" value={inputs.qGrowth} onChange={(v) => set("qGrowth", v)} aiScore={aiScores?.qGrowth} />
+        <SliderRow label="Reputation & Brand" desc="Reviews, referrals, local market position" value={inputs.qBrand} onChange={(v) => set("qBrand", v)} aiScore={aiScores?.qBrand} />
       </div>
 
       {/* Risk */}
       <div style={{ padding: "20px 24px", background: NAVY2, border: `1px solid ${BORDER}`, borderRadius: 10 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: WARM, marginBottom: 6 }}>Risk Factors</div>
         <p style={{ fontSize: 12, color: MUTED, marginBottom: 18 }}>Score 0 (no risk) to 5 (critical). Higher risk scores reduce the valuation multiple.</p>
-        <SliderRow label="Owner Dependency" desc="Business can't operate without owner" value={inputs.rOwnerDep} onChange={(v) => set("rOwnerDep", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} />
-        <SliderRow label="Client Concentration" desc="Top 3 clients drive >30% of revenue" value={inputs.rClientConc} onChange={(v) => set("rClientConc", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} />
-        <SliderRow label="Portfolio Quality Risk" desc="High-turnover or problem properties" value={inputs.rPortfolioQuality} onChange={(v) => set("rPortfolioQuality", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} />
-        <SliderRow label="Staff Retention Risk" desc="Key staff likely to leave post-close" value={inputs.rStaffRetention} onChange={(v) => set("rStaffRetention", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} />
-        <SliderRow label="Market Risk" desc="Competitive pressure, regulatory changes" value={inputs.rMarket} onChange={(v) => set("rMarket", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} />
+        <SliderRow label="Owner Dependency" desc="Business can't operate without owner" value={inputs.rOwnerDep} onChange={(v) => set("rOwnerDep", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} aiScore={aiScores?.rOwnerDep} />
+        <SliderRow label="Client Concentration" desc="Top 3 clients drive >30% of revenue" value={inputs.rClientConc} onChange={(v) => set("rClientConc", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} aiScore={aiScores?.rClientConc} />
+        <SliderRow label="Portfolio Quality Risk" desc="High-turnover or problem properties" value={inputs.rPortfolioQuality} onChange={(v) => set("rPortfolioQuality", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} aiScore={aiScores?.rPortfolioQuality} />
+        <SliderRow label="Staff Retention Risk" desc="Key staff likely to leave post-close" value={inputs.rStaffRetention} onChange={(v) => set("rStaffRetention", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} aiScore={aiScores?.rStaffRetention} />
+        <SliderRow label="Market Risk" desc="Competitive pressure, regulatory changes" value={inputs.rMarket} onChange={(v) => set("rMarket", v)} colorHigh="#E24B4A" colorLow={TEAL} max={5} aiScore={aiScores?.rMarket} />
       </div>
     </div>
   );
