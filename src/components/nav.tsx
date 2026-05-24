@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/subscription";
+import { isPMUser } from "@/lib/pm-auth";
 import { NavMobileMenu } from "./nav-mobile-menu";
 
 function TetherLogo() {
@@ -24,6 +25,7 @@ export async function Nav() {
     { label: "Deal Analyzer", href: "/napkin" },
     { label: "Pipeline", href: "/pipeline" },
     { label: "Workspace", href: "/dd-demo" },
+    ...(isPMUser(user?.email) ? [{ label: "PM Portal", href: "/pm-portal" }] : []),
     { label: "Account", href: "/account" },
   ];
 

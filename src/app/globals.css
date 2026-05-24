@@ -70,3 +70,19 @@ body {
     border-width: 0.5px;
   }
 }
+
+/* EOV Report print styles */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  #eov-report {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+}

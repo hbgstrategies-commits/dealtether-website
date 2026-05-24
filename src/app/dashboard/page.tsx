@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { getUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/subscription";
+import { isPMUser } from "@/lib/pm-auth";
 import { createClient } from "@/lib/supabase/server";
 import { ToolGrid } from "./tool-grid";
 import { TrainingWaitlist } from "./training-waitlist";
@@ -90,6 +91,27 @@ export default async function DashboardPage() {
             </div>
             <Link href="/napkin" style={{ background: "#00C9A7", color: "#0A1628", borderRadius: 8, padding: "9px 20px", fontSize: 13, fontWeight: 600, textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
               Analyze a deal →
+            </Link>
+          </div>
+        )}
+
+        {/* PM Portal — only visible to Hunter's account */}
+        {isPMUser(user.email) && (
+          <div style={{ marginBottom: "2rem" }}>
+            <div style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA5B4", marginBottom: 12 }}>Private</div>
+            <Link href="/pm-portal" style={{ textDecoration: "none" }}>
+              <div style={{ background: "rgba(0,201,167,0.05)", border: "0.5px solid rgba(0,201,167,0.25)", borderRadius: 14, padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, cursor: "pointer", transition: "border-color .15s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(0,201,167,0.5)")}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(0,201,167,0.25)")}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(0,201,167,0.08)", border: "0.5px solid rgba(0,201,167,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>🏠</div>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "#F5F2EC", marginBottom: 3 }}>PM Acquisition Portal</div>
+                    <div style={{ fontSize: 12, color: "#9AA5B4" }}>Questionnaire · QoE · Expert Opinion of Value — your private PM deal workspace.</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#00C9A7", whiteSpace: "nowrap", flexShrink: 0 }}>Open portal →</div>
+              </div>
             </Link>
           </div>
         )}
