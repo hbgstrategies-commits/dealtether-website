@@ -23,6 +23,7 @@ export async function Nav() {
     { label: "Sourcing", href: "/sourcing" },
     { label: "QoE", href: "/qoe" },
     { label: "Deal Analyzer", href: "/napkin" },
+    { label: "Valuation 3.0", href: "/valuation" },
     { label: "Pipeline", href: "/pipeline" },
     { label: "Workspace", href: "/dd-demo" },
     ...(isPMUser(user?.email) ? [{ label: "PM Portal", href: "/pm-portal" }] : []),

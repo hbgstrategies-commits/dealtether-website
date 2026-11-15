@@ -36,6 +36,17 @@ const TOOLS = [
     colorBd: "rgba(0,201,167,0.18)",
   },
   {
+    stage: "03",
+    isNew: true,
+    label: "Valuation 3.0",
+    desc: "The new valuation model. Forecast from year-to-date numbers, a size-and-comps multiple, and a price window from cash offer to creative ceiling.",
+    href: "/valuation",
+    cta: "Try version 3.0 →",
+    color: "#00C9A7",
+    colorBg: "rgba(0,201,167,0.08)",
+    colorBd: "rgba(0,201,167,0.18)",
+  },
+  {
     stage: "04",
     label: "Pipeline",
     desc: "Every deal side by side. Compare DSCR, IRR, and offer ranges at a glance. Push the winner to due diligence.",
@@ -84,6 +95,11 @@ function ToolCard({ tool }: { tool: typeof TOOLS[number] }) {
           {tool.beta && (
             <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".03em", color: "#E8A020", background: "rgba(232,160,32,0.08)", border: "0.5px solid rgba(232,160,32,0.2)", borderRadius: 99, padding: "2px 8px" }}>
               Beta
+            </div>
+          )}
+          {tool.isNew && (
+            <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".03em", color: "#0A1628", background: "#00C9A7", borderRadius: 99, padding: "2px 8px" }}>
+              New
             </div>
           )}
         </div>
