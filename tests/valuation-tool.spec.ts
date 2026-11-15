@@ -90,4 +90,32 @@ test.describe("Valuation 3.0", () => {
     await page.getByRole("button", { name: "← Back" }).click();
     await expect(page.getByTestId("creative-ceiling")).toContainText("$738,5");
   });
+
+  test("the negotiate step turns the valuation into an offer plan", async ({ page }) => {
+    await fillFinancials(page);
+    await page.getByRole("button", { name: /rate the business/i }).click();
+    await setScore(page, "Client concentration", "2");
+    await page.getByRole("button", { name: /see the valuation/i }).click();
+    await page.getByRole("button", { name: /structure the deal/i }).click();
+    await page.getByRole("button", { name: /plan the negotiation/i }).click();
+
+    const builder = page.getByTestId("offer-builder");
+    await expect(builder).toBeVisible();
+    // Concerns flagged by the valuation arrive pre-ticked.
+    await expect(builder.getByLabel(/A few customers drive most of the revenue/)).toBeChecked();
+    await expect(builder.getByLabel(/asking price is above what the numbers support/)).toBeChecked();
+    await expect(page.getByTestId("structure-clawback")).toBeVisible();
+
+    await builder.getByLabel("Taking care of employees").check();
+    await expect(builder.getByText("Who on the team are you most concerned about after the sale?")).toBeVisible();
+    await builder.getByLabel("Staying involved after the sale").check();
+    await expect(page.getByTestId("structure-cashPlusSalary")).toBeVisible();
+
+    await expect(page.getByTestId("pkg-price")).toContainText("$");
+    await expect(page.getByTestId("plan-walkaway")).toContainText("$");
+    await expect(builder.getByText(/above your walk-away number/)).toBeVisible();
+
+    await builder.getByLabel("Deal stage").selectOption({ label: "Letter of intent" });
+    await expect(builder.getByText("3. Letter of intent ← you are here")).toBeVisible();
+  });
 });

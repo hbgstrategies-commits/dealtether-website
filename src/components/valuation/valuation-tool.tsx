@@ -14,12 +14,13 @@ import {
   type SubjectiveKey,
 } from "@/lib/napkin-model";
 import { STATE_TAX } from "@/lib/napkin-model-data";
+import { OfferBuilder } from "./offer-builder";
 import { TrendChart } from "@/components/napkin/trend-chart";
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
 type Pair = { revenue: string; sde: string };
 
-const STEPS = ["Financials", "Quality", "Valuation", "Deal & cash flow"];
+const STEPS = ["Financials", "Quality", "Valuation", "Deal & cash flow", "Negotiate"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const CARD = "rounded-xl border border-teal-bd bg-navy-100 p-4 md:p-5";
@@ -574,13 +575,27 @@ export function ValuationTool({ today: todayProp }: { today?: string }) {
             note={{ amount: sellerNoteAmt, rate: num(sellerNote.rate) ?? 0, years: num(sellerNote.years) ?? 0 }}
           />
 
-          <Nav back={() => go(3)} />
+          <Nav back={() => go(3)} next={() => go(5)} nextLabel="Next: plan the negotiation →" />
           <div className="rounded-lg border border-muted/20 bg-muted/5 px-4 py-3">
             <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted">Disclaimer</div>
             <p className="m-0 text-[11px] leading-relaxed text-muted">
               Tether&apos;s valuation estimates, offer ranges, DSCR calculations, and IRR projections are for informational purposes only and do not constitute financial, legal, investment, or tax advice. All figures are estimates based solely on the inputs you provide. Actual business value and investment outcomes may differ materially. SBA loan eligibility is subject to lender approval and underwriting. Consult a qualified M&amp;A advisor, CPA, and lender before executing any transaction.
             </p>
           </div>
+        </div>
+      )}
+
+      {step === 5 && result && (
+        <div className="space-y-4">
+          <OfferBuilder
+            r={result}
+            businessName={businessName}
+            askingPrice={num(askingPrice) ?? 0}
+            sbaRate={(num(sbaRate) ?? 0) / 100}
+            sbaMonths={Math.round((num(sbaYears) ?? 0) * 12)}
+            scores={scores}
+          />
+          <Nav back={() => go(4)} />
         </div>
       )}
     </div>

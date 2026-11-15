@@ -86,3 +86,26 @@ body {
     border-radius: 0 !important;
   }
 }
+
+/* Offer Builder — print only the negotiation plan */
+@media print {
+  body.print-offer-plan * {
+    visibility: hidden;
+  }
+  body.print-offer-plan #offer-plan,
+  body.print-offer-plan #offer-plan * {
+    visibility: visible;
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #bbb !important;
+  }
+  body.print-offer-plan #offer-plan {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    border: none !important;
+  }
+  body.print-offer-plan #offer-plan .no-print {
+    display: none !important;
+  }
+}
